@@ -1,5 +1,6 @@
 % !TeX root = ../../main.tex
-\subsection{False-discovery conclusions depend on the analysis contract}
+\subsection{Denominator correction removes one artifact but does not resolve
+calibration}
 \label{sec:fdr-audit}
 
 The recent false-discovery manuscript by \citet{dempster2025fdr} raised the
@@ -20,44 +21,54 @@ retained the deposited CB\textsuperscript{2} results and ran BARCS on the
 deposited normalized tables.  In the reported Avana analysis, restriction to
 null genes before fitting changed the column totals.  Reusing the full-library
 CB\textsuperscript{2} probabilities for the same genes reduced the number of
-FDR 0.10 discoveries from 152 to zero.
+FDR 0.10 discoveries from 152 to zero.  This shows that the specific 152-call
+result depended on the denominator used for fitting; it does not refute the
+broader claim that beta-binomial analyses can be anti-conservative.
 
 \begin{table}[htbp]
 \centering
-\caption{Reported, reanalyzed CB\textsuperscript{2}, and BARCS results in the
-external false-discovery audit.  Reported results and deposited inputs follow
-\citet{dempster2025fdr} and the accompanying data release
-\citep{dempster2025fdrdata}.  CB\textsuperscript{2} was reanalyzed only for
-Avana; BARCS was run for PSN1 and DeWeirdt.  ``Known'' denotes the 28 curated
-DeWeirdt condition--gene combinations \citep{deweirdt2020isogenic}, not a
-complete truth set.}
+\caption{Expected and observed behavior in the external false-discovery audit.
+Reported results and deposited inputs follow \citet{dempster2025fdr} and the
+accompanying data release \citep{dempster2025fdrdata}.  For an all-null
+benchmark, a well-calibrated analysis should produce approximately uniform
+null $p$-values, about 5\% below 0.05, and few or no calls after FDR control.
+For DeWeirdt, ``known'' denotes 28 curated condition--gene combinations
+\citep{deweirdt2020isogenic}, not a complete truth set; therefore no exact
+number of expected calls can be specified.}
 \label{tab:chronosaudit}
 \footnotesize
 \setlength{\tabcolsep}{3pt}
 \renewcommand{\arraystretch}{1.10}
-\begin{tabular}{p{0.15\textwidth}p{0.17\textwidth}p{0.17\textwidth}
-                p{0.24\textwidth}p{0.16\textwidth}}
+\begin{tabular}{>{\raggedright\arraybackslash}p{0.14\textwidth}
+                >{\raggedright\arraybackslash}p{0.24\textwidth}
+                >{\raggedright\arraybackslash}p{0.34\textwidth}
+                >{\raggedright\arraybackslash}p{0.19\textwidth}}
 \toprule
-Benchmark & Reported by \citet{dempster2025fdr} &
-CB\textsuperscript{2} reanalysis & BARCS & Diagnosis\\
+Benchmark & Expected if the analysis is well behaved & Observed result &
+Interpretation\\
 \midrule
 Avana null-only &
-152 calls at FDR 0.10 &
-0 calls at FDR 0.10 &
---- &
-Largest full-total null $p<0.05$ rate: 0.145\\
+Approximately 5\% of null $p$-values below 0.05; few or no calls at FDR 0.10 &
+Reported CB\textsuperscript{2}: 152 calls at FDR 0.10.  Full-total
+CB\textsuperscript{2}: 0 calls.  BARCS was not run &
+The 152-call result was denominator-dependent; the residual null rate of 0.145
+leaves the broader miscalibration concern unresolved\\
 \addlinespace[2pt]
 PSN1 null split &
-0 gene calls &
---- &
-0 gene calls; guide $p<0.05$: 0.0481 raw and 0.0465 scaled &
-Control scale: 1.017\\
+Held-out guide $p<0.05$ rate near 0.05, control scale near 1, and few or no
+gene calls &
+Reported CB\textsuperscript{2}: 0 gene calls.  BARCS: 0 gene calls; guide
+$p<0.05$ rates 0.0481 raw and 0.0465 scaled; control scale 1.017 &
+This result is consistent with the null expectation, but one benchmark does
+not establish general calibration\\
 \addlinespace[2pt]
 DeWeirdt differential screens &
-0 calls; 0/28 known recovered &
---- &
-38 calls; 1/28 known interactions recovered &
-37/38 calls arose in one comparison\\
+Known interactions enriched among calls, with no comparison dominating solely
+because of a quality artifact &
+Reported CB\textsuperscript{2}: 0 calls and 0/28 known recovered.  BARCS: 38
+calls and 1/28 known recovered; 37/38 calls arose in one comparison &
+Poor known-interaction recovery and one-comparison concentration suggest
+comparison-specific confounding\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -71,11 +82,13 @@ A-1331852; 37 of its 38 calls came from the OVCAR8--olaparib comparison without
 recovering BRCA1 or BRCA2.  A global treatment-associated quality shift cannot
 be separated from treatment with only two replicates per arm.
 
-These results do not establish a winner against a complete ground truth.
-They show that pre-fit guide subsetting and common normalization can alter the
-effective depth seen by a library-total-conditional model.  Comparator studies
-must preserve full-library totals, separate calibration guides from evaluation
-guides, and use blocked permutations or independent validation for
-differential screens.  Zero Avana discoveries after restoring the full total
-do not demonstrate nominal calibration: the largest cell-line-specific
-$p<0.05$ rate remained 0.145.
+This reanalysis therefore narrows, but does not refute, the concern raised by
+\citet{dempster2025fdr}.  It shows that pre-fit guide subsetting and common
+normalization can alter the effective depth seen by a
+library-total-conditional model, so the reported 152-call example should not
+be attributed to the sampling model alone.  At the same time, zero Avana
+discoveries after restoring the full total do not demonstrate nominal
+calibration: the largest cell-line-specific $p<0.05$ rate remained 0.145, and
+the DeWeirdt analysis remained unstable.  Comparator studies must preserve
+full-library totals, separate calibration guides from evaluation guides, and
+use blocked permutations or independent validation for differential screens.

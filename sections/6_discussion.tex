@@ -23,13 +23,16 @@ processed matrix, not a distributional claim that beta-binomial regression
 dominates negative-binomial regression.
 
 The IL2RA analysis gives a complementary sensitivity--precision tradeoff.
-The four-bin BARCS fit recovered 22 validated regulators, compared with 18 for
-its outer-bin fit, but its validation yield was lower (44.9\% versus 52.9\%).
-The intermediate bins thus recovered four additional validated effects at the
-cost of 11 additional unvalidated calls.  Cross-fitted non-targeting controls
-reduced the guide-level $p<0.05$ rate from 0.133 to 0.049, and a permuted fold
-assignment gave 0.052.  These diagnostics address the operating point; they
-do not remove the dependence among FACS bins drawn from the same donor.
+The calibrated four-bin BARCS fit recovered 22 validated regulators with 49
+calls, compared with 17 validated regulators among 72 calls for the matched
+four-bin MAGeCK-MLE fit.  Validated regulators therefore comprised 44.9\% and
+23.6\% of the respective call sets, but these are panel-hit fractions rather
+than estimates of positive predictive value: genes outside the limited
+validation panel were not individually tested and should not be labeled false.
+Cross-fitted non-targeting controls reduced the BARCS guide-level $p<0.05$ rate
+from 0.133 to 0.049, and a permuted fold assignment gave 0.052.  These
+diagnostics address the operating point; they do not remove the dependence
+among FACS bins drawn from the same donor.
 
 The simulations identify where BARCS still needs caution.  Dispersion
 moderation improved genome-scale F1, while MAGeCK-MLE slightly exceeded
@@ -46,14 +49,16 @@ Aggregation-matched held-out scaling reduced but did not eliminate that
 inflation.  Guide dependence must therefore be represented in calibration and
 in future hierarchical gene-level inference.
 
-The external audit qualifies a recent concern without reversing it wholesale.
+The external audit corrects one benchmark result but does not refute the
+broader concern about beta-binomial anti-conservatism.
 The reported 152 CB\textsuperscript{2} Avana null discoveries did not survive
 restoration of the full-library denominator, demonstrating that pre-fit
 subsetting changed the statistical input.  This supports the
 denominator-corrected CB\textsuperscript{2} result and the same immutable-total
-contract used by BARCS.  It does not establish universal beta-binomial
-calibration: the largest nominal Avana null rate remained 0.145, and BARCS
-recovered only one of 28 curated DeWeirdt interactions.
+contract used by BARCS, but it is not evidence of nominal beta-binomial
+calibration.  The largest Avana null $p<0.05$ rate remained 0.145, and BARCS
+recovered only one of 28 curated DeWeirdt interactions; both findings leave the
+broader calibration concern intact.
 
 The defensible conclusion is therefore narrower than a universal method
 ranking.  BARCS supplies a general beta-binomial coefficient model for
