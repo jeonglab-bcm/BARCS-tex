@@ -24,8 +24,7 @@ three-time-point fit increased macro-average precision from 0.832 to 0.838 and
 directional essential-gene recall at FDR 0.10 from 0.538 to 0.600.  Recall at
 an empirical 5\% proxy-null false-positive rate increased from 0.858 to 0.867.
 The proxy-null $p<0.05$ rate changed from 0.038 to 0.039.  Thus day 7
-improved essential-gene recovery modestly, but did not improve every
-calibration measure.
+improved essential-gene recovery modestly, while leaving some calibration measures unchanged.
 
 For the head-to-head calibration analysis, the same 1,000 non-targeting
 guides were assigned identically to 156--159 pseudo-genes per cell line, with
@@ -35,11 +34,11 @@ cell-line-specific absolute calibration error was 0.0207 for BARCS, 0.0198 for
 DESeq2, 0.0181 for edgeR-QL, 0.0178 for limma--voom, and 0.0171 for
 MAGeCK-MLE.  Thus aggregation-aware calibration removed the earlier
 MAGeCK-MLE separation: control scaling is a method-agnostic operation, not a
-beta-binomial advantage.  Alternative methods ranked known essential genes
+beta-binomial advantage. However, this calibration parity did not carry over to ranking: alternative methods ranked known essential genes
 more strongly.  Average precision was 0.838 for BARCS and 0.874--0.877 for
 the four alternatives; directional recall at gene FDR 0.10 was 0.600 versus
 0.738--0.767.  At a matched empirical 5\% proxy-null rate, recall was 0.867
-versus 0.879--0.888.
+versus 0.879--0.888. Thus, once calibration is assessed at the same aggregation level for every method, BARCS matches its competitors in calibration but not in ranking sensitivity.
 
 \begin{figure}[htbp]
 \centering
