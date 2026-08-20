@@ -1,0 +1,163 @@
+name: overleaf-sync
+
+# Keep this public mirror (origin) and the Overleaf bridge identical.
+#
+# The manuscript has one history served from two places:
+#
+#   origin    github.com/jeonglab-bcm/BARCS-tex  - this repository, the public mirror.
+#   overleaf  latex.bioinfolder.com git bridge   - where coauthors edit. Authenticated.
+#
+# A plain `git push` to this repository does NOT touch Overleaf, and an edit in
+# Overleaf does NOT touch this repository. This workflow closes that gap: on
+# every push to `main`, on a schedule, and on demand, it reconciles the two
+# and fast-forwards whichever side is behind. It is the automated form of the manual
+# scripts/manuscript_sync.sh that lives in BARCS-manuscript.
+#
+# Safety:
+#   * Only fast-forwards are ever pushed. Git rejects a non-fast-forward push,
+#     so neither side can ever be force-overwritten by this workflow.
+#   * The reconcile job runs only after a successful LaTeX compile (it
+#     `needs: build`), so broken LaTeX is never pushed to the shared Overleaf.
+#   * When the two histories have genuinely diverged (commits on both sides) it
+#     fails loudly and asks for a human, rather than guessing.
+#   * Without the OVERLEAF_GIT_TOKEN secret the sync step is a no-op that posts
+#     a notice, so this workflow is safe to merge before the secret exists.
+#
+# Required repository secrets (set on THIS repository, BARCS-tex):
+#   OVERLEAF_GIT_TOKEN  - token for the Overleaf git bridge (same value as in
+#                         BARCS-manuscript).
+#   OVERLEAF_GIT_USER   - optional; defaults to "git".
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    # Hourly, so an edit on either side is mirrored to the other within the
+    # hour.
+    - cron: '0 * * * *'
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+
+jobs:
+  # Compile check + PDF artifact. Runs on every push and pull request. It is
+  # also the gate for the sync job below.
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Compile
+        uses: xu-cheng/latex-action@v3
+        with:
+          root_file: main.tex
+          latexmk_shell_escape: false
+          args: -pdf -interaction=nonstopmode -halt-on-error -file-line-error
+
+      - name: Upload the PDF
+        uses: actions/upload-artifact@v4
+        with:
+          name: manuscript-pdf
+          path: main.pdf
+          if-no-files-found: error
+
+      # A failed compile is far easier to diagnose from the log than from
+      # truncated console output.
+      - name: Upload the LaTeX log on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: latex-log
+          path: |
+            main.log
+            main.blg
+          if-no-files-found: ignore
+
+  # Reconcile GitHub and Overleaf so they end up at the same commit.
+  # Skipped on pull requests (we never sync a proposed change), and only runs
+  # if the build above succeeded.
+  sync:
+    needs: build
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        # Full history so the ancestor checks below see the shared commits.
+        with:
+          fetch-depth: 0
+
+      - name: Reconcile GitHub and Overleaf
+        env:
+          OVERLEAF_GIT_TOKEN: ${{ secrets.OVERLEAF_GIT_TOKEN }}
+          OVERLEAF_GIT_USER: ${{ secrets.OVERLEAF_GIT_USER || 'git' }}
+        run: |
+          set -euo pipefail
+
+          OVERLEAF_URL="https://git@latex.bioinfolder.com/git/6a6ec212d3ea56f57964b094"
+
+          # Without the token we cannot reach Overleaf; the compile check
+          # above still ran. Post a notice and stop.
+          if [ -z "${OVERLEAF_GIT_TOKEN:-}" ]; then
+            echo "::notice::OVERLEAF_GIT_TOKEN is not set, so this run only compile-checked the mirror. Set OVERLEAF_GIT_TOKEN (and optionally OVERLEAF_GIT_USER) on this repository to keep GitHub and Overleaf identical."
+            exit 0
+          fi
+
+          git config --global credential.helper store
+          printf 'https://%s:%s@latex.bioinfolder.com\n' \
+            "${OVERLEAF_GIT_USER}" "${OVERLEAF_GIT_TOKEN}" > ~/.git-credentials
+          chmod 600 ~/.git-credentials
+
+          if ! git remote get-url overleaf >/dev/null 2>&1; then
+            git remote add overleaf "$OVERLEAF_URL"
+          fi
+
+          echo "Fetching the Overleaf bridge."
+          if ! git fetch --quiet overleaf main; then
+            echo "error: could not fetch the Overleaf bridge. Check OVERLEAF_GIT_TOKEN / OVERLEAF_GIT_USER." >&2
+            exit 1
+          fi
+
+          github_head=$(git rev-parse HEAD)
+          overleaf_head=$(git rev-parse overleaf/main)
+
+          echo "  github   ${github_head:0:8}  (HEAD)"
+          echo "  overleaf ${overleaf_head:0:8}"
+
+          if [ "$overleaf_head" = "$github_head" ]; then
+            echo "Already identical at ${github_head:0:8}; nothing to do."
+            exit 0
+          fi
+
+          # Four cases, exactly as in scripts/manuscript_sync.sh.
+          if git merge-base --is-ancestor "$github_head" "$overleaf_head"; then
+            echo "Overleaf is ahead; fast-forwarding the mirror and pushing to GitHub."
+            git checkout --quiet --detach "$overleaf_head"
+            if ! git push --quiet origin "HEAD:main"; then
+              echo "error: GitHub main has commits Overleaf lacks, so the fast-forward was rejected." >&2
+              echo "       Reconcile by hand (BARCS-manuscript scripts/manuscript_sync.sh), then re-run." >&2
+              exit 1
+            fi
+            echo "GitHub mirror updated to ${overleaf_head:0:8}."
+          elif git merge-base --is-ancestor "$overleaf_head" "$github_head"; then
+            echo "GitHub is ahead; pushing to Overleaf."
+            if ! git push --quiet overleaf "HEAD:main"; then
+              echo "error: the push to Overleaf was rejected (non-fast-forward)." >&2
+              echo "       Overleaf has commits this mirror lacks; reconcile by hand, then re-run." >&2
+              exit 1
+            fi
+            echo "Overleaf updated to ${github_head:0:8}."
+          else
+            echo "error: GitHub main and the Overleaf bridge have genuinely diverged (commits on both sides)." >&2
+            echo "       Reconcile by hand (BARCS-manuscript scripts/manuscript_sync.sh), then re-run." >&2
+            exit 1
+          fi
+
+          rm -f ~/.git-credentials
+          echo "Both remotes now agree."
