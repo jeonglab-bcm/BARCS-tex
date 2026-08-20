@@ -34,9 +34,10 @@ on:
   pull_request:
     branches: [main]
   schedule:
-    # Hourly, so an edit on either side is mirrored to the other within the
-    # hour.
-    - cron: '0 * * * *'
+    # Every two hours, so an edit on either side is mirrored to the other
+    # promptly without burning the whole monthly Actions allowance on the
+    # compile. Change to '0 * * * *' for hourly if you want tighter syncing.
+    - cron: '0 */2 * * *'
   workflow_dispatch:
 
 concurrency:
