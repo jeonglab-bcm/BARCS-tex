@@ -1,20 +1,19 @@
 % !TeX root = ../main.tex
-Pooled CRISPR screens increasingly measure guide abundance across time,
-ordered FACS fractions, donors, doses, or factorial treatment arms.  Their
-scientific targets are slopes, adjusted associations, and interactions.
+Pooled CRISPR screens increasingly combine multiple design dimensions, including time courses, ordered FACS fractions, donor cohorts, dose series, and factorial treatment arms, within a single environment. Their
+scientific quantities of interest are slopes, adjusted associations, and interactions.
 Reducing these experiments to repeated high-versus-low contrasts discards
 intermediate observations and prevents one effect from being estimated
 conditional on the remaining design variables.
 
 The count denominator is central to this problem.  RNA-sequencing methods
 generally model marginal counts with negative-binomial distributions and
-represent library size through normalization or an offset
+represent library size through normalization or an offset, which is appropriate when no natural total is available for a gene's count to be conditioned on
 \citep{marioni2008rnaseq,anders2010deseq,love2014deseq2,law2014voom,
 lun2016edger}.  In a pooled
 screen, however, each guide count is observed together with the total number
-of mapped guide reads in that library.  Conditional on this total, guide
-abundance is a proportion.  The beta-binomial model represents that sampling
-structure directly and separates depth-dependent sequencing variation from
+of mapped guide reads in that library, and conditional on this total, guide
+abundance is a proportion rather than an unconstrained count.  The beta-binomial model represents that sampling
+structure directly, separating depth-dependent sequencing variation from
 heterogeneity among biological libraries.  The original
 CB\textsuperscript{2} study found better goodness of fit for beta-binomial than
 negative-binomial models in pooled CRISPR counts \citep{jeong2019beta}.
@@ -37,18 +36,15 @@ beta-binomial sampling model and replaces two group means with a regression
 design matrix.  A single fit can estimate time, donor-adjusted abundance,
 treatment, or interaction effects.  Independent biological libraries, rather
 than individual reads, determine the residual degrees of freedom.  This
-generalizes the questions available through CB\textsuperscript{2}; it does not
+generalizes the range of questions CB\textsuperscript{2} can address; it does not
 require the two implementations to share the same estimator or finite-sample
 test.
 
-We evaluate the extension in the order in which it is used.  A
+We evaluate the extension in increasing order of design complexity and decreasing order of experimental control.  A
 three-time-point Cas13 screen tests longitudinal coefficients across four
 replicate-complete cell lines.  An IL2RA screen tests a donor-adjusted ordered
 phenotype against independently validated regulators and held-out
 non-targeting guides.  Genome-scale and factorial simulations then isolate
-dispersion moderation and denominator choice under known truth.  Finally, an
-external audit shows how pre-fit subsetting can change the effective library
-total and the apparent false-discovery result.  Together, these analyses test
-the central claim that beta-binomial CRISPR analysis can be extended from
-pairwise comparisons to interpretable multivariable coefficients while
-retaining the denominator that defines the sampling model.
+dispersion moderation and denominator choice against a known ground truth, including a null-calibration grid that identifies within-gene guide correlation, rather than dispersion alone, as a source of gene-level miscalibration.  Finally, an
+external audit examines how pre-fit subsetting can change the effective library
+total and an apparent false-discovery result.  Together, these analyses assess where the multivariable beta-binomial extension improves on pairwise comparisons, where it matches rather than exceeds existing negative-binomial methods, and where its calibration still requires independent validation.
