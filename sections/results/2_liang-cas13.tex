@@ -44,12 +44,19 @@ versus 0.879--0.888. Thus, once calibration is assessed at the same aggregation 
 \centering
 \includegraphics[width=\textwidth]{figures/liang_longitudinal_volcano_trajectories.pdf}
 \caption{\textbf{Longitudinal Cas13 sensitivity analysis using days 0, 7, and
-14.}  The upper panels show gene-level results for BARCS, MAGeCK-MLE,
-edgeR-QL, DESeq2, and limma--voom across the four replicate-complete cell
-lines.  The horizontal line marks two-sided $p=0.05$; $-\log_{10}(p)$ is
-clipped at 60 and clipped points are triangles.  Colored points are
-negative-effect genes called at FDR 0.10.  (A--C) Processed guide abundance in
-counts per million for three proxy-null disagreements.  Among proxy-null
+14.}  (A--E) Gene-level results for BARCS, MAGeCK-MLE, edgeR-QL, DESeq2, and
+limma--voom across the four replicate-complete cell lines.  All five panels
+share one x and y scale and one set of tick marks, so effect sizes are directly
+comparable between methods.  The x axis is the signed logarithmic transform
+$\mathrm{sign}(\beta)\log_{10}(1+|\beta|/0.25)$, labelled at the untransformed
+effect values.  The horizontal line marks two-sided $p=0.05$; $-\log_{10}(p)$
+is clipped at 60, clipped points are triangles, and the count above each panel
+gives how many points that clip represents.  Colour denotes cell line
+throughout the figure; coloured points are negative-effect genes called at FDR
+0.10, and all remaining genes are grey.  (F--H) Processed guide abundance in
+counts per million for three proxy-null disagreements, with markers filled by
+cell line and replicates distinguished by point shape and line type.  Among
+proxy-null
 guides, 61 satisfied BARCS $p\geq0.20$ with all three guide-level alternatives
 $p<0.05$.  Within each cell line, the candidate minimizing the largest
 alternative $p$ was identified; the three with the largest ratio of BARCS
