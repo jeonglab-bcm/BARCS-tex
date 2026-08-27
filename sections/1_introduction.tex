@@ -25,13 +25,22 @@ regression is available in \texttt{corncob} and statistical packages including
 \citep{martin2020corncob,lesnoff2012aod,yee1996vgam,rigby2005gamlss}, but these
 tools do not provide a CRISPR-oriented workflow that preserves immutable
 full-library totals, fits guide-level design matrices, and
-connects the result to established screen outputs.  Specialized methods such
+connects the result to established screen outputs.  Conversely, negative-binomial
+screen and RNA-sequencing methods, among them MAGeCK-MLE \citep{li2014mageck},
+edgeR-QL \citep{lun2016edger}, DESeq2 \citep{love2014deseq2}, and limma--voom
+\citep{law2014voom}, already accept an arbitrary design matrix, and the
+comparisons reported below confirm that they do so competitively.  The open
+question is therefore not whether a multivariable screen analysis is possible,
+but whether the library-total-conditional sampling model---the one component
+that CB\textsuperscript{2} showed to fit pooled counts better than a marginal
+negative-binomial model---can be carried into that setting, and what doing so
+does and does not buy.  Specialized methods such
 as Chronos and Waterbear model population dynamics or joint FACS-bin
 membership, respectively, but are tied to those experimental structures
 \citep{dempster2021chronos,pimentel2024waterbear}.
 
 We developed BARCS (Beta-binomial Analysis and Regression for CRISPR Screens)
-to fill this design gap.  BARCS keeps the library-total-conditional
+to answer that question.  BARCS keeps the library-total-conditional
 beta-binomial sampling model and replaces two group means with a regression
 design matrix.  A single fit can estimate time, donor-adjusted abundance,
 treatment, or interaction effects.  Independent biological libraries, rather

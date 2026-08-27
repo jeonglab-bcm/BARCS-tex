@@ -24,7 +24,14 @@ three-time-point fit increased macro-average precision from 0.832 to 0.838 and
 directional essential-gene recall at FDR 0.10 from 0.538 to 0.600.  Recall at
 an empirical 5\% proxy-null false-positive rate increased from 0.858 to 0.867.
 The proxy-null $p<0.05$ rate changed from 0.038 to 0.039.  Thus day 7
-improved essential-gene recovery modestly, while leaving some calibration measures unchanged.
+improved essential-gene recovery modestly, while leaving some calibration measures unchanged.  Both proxy-null quantities
+depend on a definition that is itself imperfect.  Cell-line-specific nulls are
+targeted lncRNAs with TPM equal to zero in both available expression assays, so
+limited expression sensitivity and RfxCas13d collateral activity can each place
+a genuinely fitness-relevant target in the null set.  Because such
+contamination rewards conservative methods, the proxy-null rates reported here
+and in the comparison below are diagnostics rather than validated type-I
+errors.
 
 For the head-to-head calibration analysis, the same 1,000 non-targeting
 guides were assigned identically to 156--159 pseudo-genes per cell line, with
