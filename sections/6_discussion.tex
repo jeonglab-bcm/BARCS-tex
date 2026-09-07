@@ -12,12 +12,13 @@ fit, while the associated proxy-null rate was essentially unchanged
 The like-for-like Liang reanalysis changes the calibration interpretation.
 All five methods received the same non-targeting-control scaling after the
 controls were grouped to match the target-gene guide-count distribution.
-This makes the diagnostic aggregation-aware rather than transferring a
-one-guide scale to multi-guide gene statistics.  Mean absolute calibration
+That makes the diagnostic aggregation-aware: the scale is estimated on the
+pseudo-gene summaries, not by transferring a one-guide scale to
+multi-guide gene statistics.  Mean absolute calibration
 errors were similar (0.0171--0.0207), with MAGeCK-MLE numerically closest to
 nominal and BARCS lower in ranking and FDR recall.  Control scaling remains a
 general calibration device rather than evidence for one count likelihood.
-Moreover, the matrix was normalized, ComBat-corrected, and rounded before
+The matrix was also normalized, ComBat-corrected, and rounded before
 fitting.  The result supports a practical coefficient analysis of that
 processed matrix, not a distributional claim that beta-binomial regression
 dominates negative-binomial regression.
@@ -52,7 +53,7 @@ in future hierarchical gene-level inference.
 The external audit corrects one benchmark result but does not refute the
 broader concern about beta-binomial anti-conservatism.
 The reported 152 CB\textsuperscript{2} Avana null discoveries did not survive
-restoration of the full-library denominator, demonstrating that pre-fit
+restoration of the full-library denominator, showing that pre-fit
 subsetting changed the statistical input.  This supports the
 denominator-corrected CB\textsuperscript{2} result and the same immutable-total
 contract used by BARCS, but it is not evidence of nominal beta-binomial
