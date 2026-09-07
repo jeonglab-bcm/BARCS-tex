@@ -53,12 +53,10 @@ moderation effect.}
 
 The moderation gain persisted across requested thresholds at MOI 0.20 and in
 the secondary MOI-0.30 analysis (Figure~\ref{fig:crispulator}).  Fitting the
-50,000 guide-level regressions required 70.1--102.8 seconds per primary seed
-on the analysis system, providing a direct screen-scale runtime check.
+50,000 guide-level regressions took 70.1--102.8 seconds per primary seed on the analysis system.  That gives a direct screen-scale runtime check.
 MAGeCK-MLE slightly exceeded BARCS-MOD in AUROC and average precision while
 operating at a much lower realized FDP; CRISPhieRmix operated at a higher FDP
-(Table~\ref{tab:crispulator-comparators}).  Thus the nominal-threshold
-comparison does not define one universal winner.  In the broader 400-gene
+(Table~\ref{tab:crispulator-comparators}).  The nominal-threshold comparison does not pick a single winner.  In the broader 400-gene
 comparison, edgeR-QL, DESeq2, and limma--voom matched or exceeded BARCS
 ranking.  After matching methods on realized FDP, no method separated from
 the others above an FDP of 0.005.  Ranking and calibration therefore describe

@@ -57,9 +57,7 @@ typical run because one library-denominator seed collapsed.  BARCS-ST F1 was
 0.039, 0.709, and 0.716 across the three seeds; BARCS-MOD F1 was 0.011, 0.680,
 and 0.754.  With the non-targeting denominator, the corresponding values were
 0.798, 0.924, and 0.889 for BARCS-ST and 0.899, 0.933, and 0.920 for BARCS-MOD.
-Thus the control denominator improved every seed, but the magnitude was
-heterogeneous: in the two noncollapsed runs, the contrast was approximately
-0.71 versus 0.91 rather than a near doubling.  The held-out null rates
+The control denominator improved every seed, though unevenly: in the two noncollapsed runs it raised F1 from approximately 0.71 to 0.91, not nearly doubling it.  The held-out null rates
 remained below the nominal 0.10 in all cases.
 
 \begin{figure}[htbp]
@@ -89,8 +87,6 @@ Non-targeting controls are therefore efficient for detecting targeted
 interactions, whereas safe-harbor controls better absorb the shared cutting
 response.  MAGeCK-MLE is shown only as a reference: the simulated truth is
 guide-level, leaving no within-gene replication for its native gene model.
-Accordingly, this benchmark is a denominator and moderation ablation within
-BARCS, not evidence that the beta-binomial sampling model outperforms a valid
-interaction comparator.  A method-neutral comparison requires a simulation
+So this benchmark is a denominator and moderation ablation within BARCS, not evidence that the beta-binomial sampling model outperforms a valid interaction comparator.  A method-neutral comparison requires a simulation
 with several independently simulated guides per gene and a common gene-level
 interaction estimand.

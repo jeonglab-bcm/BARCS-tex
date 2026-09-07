@@ -13,18 +13,17 @@ continuous time slope with a replicate block and two-sided tests.
 The deposited values had already undergone median-of-ratios normalization,
 ComBat correction, and replicate-outlier processing.  We rounded them once to
 the nearest pseudo-count and supplied the identical matrix to every method.
-Accordingly, this is a processed-count sensitivity analysis, not a
+This makes it a processed-count sensitivity analysis, not a
 likelihood-faithful comparison of beta-binomial and negative-binomial
-sampling.  The same caution about processing-dependent effective depth raised
-by the external audit therefore applies here.
+sampling; the caution about processing-dependent effective depth raised in
+the external audit applies here.
 
 The design ablation directly tested whether the middle time point contributed
 information.  Relative to a BARCS fit using only days 0 and 14, the
 three-time-point fit increased macro-average precision from 0.832 to 0.838 and
 directional essential-gene recall at FDR 0.10 from 0.538 to 0.600.  Recall at
 an empirical 5\% proxy-null false-positive rate increased from 0.858 to 0.867.
-The proxy-null $p<0.05$ rate changed from 0.038 to 0.039.  Thus day 7
-improved essential-gene recovery modestly, while leaving some calibration measures unchanged.
+The proxy-null $p<0.05$ rate moved from 0.038 to 0.039.  Day 7 improved essential-gene recovery modestly, with some calibration measures essentially unchanged.
 
 For the head-to-head calibration analysis, the same 1,000 non-targeting
 guides were assigned identically to 156--159 pseudo-genes per cell line, with
@@ -32,13 +31,11 @@ guide counts sampled from the target-gene distribution.  The same tail-scaling
 rule was then applied to each method's native pseudo-gene summary.  Mean
 cell-line-specific absolute calibration error was 0.0207 for BARCS, 0.0198 for
 DESeq2, 0.0181 for edgeR-QL, 0.0178 for limma--voom, and 0.0171 for
-MAGeCK-MLE.  Thus aggregation-aware calibration removed the earlier
-MAGeCK-MLE separation: control scaling is a method-agnostic operation, not a
-beta-binomial advantage. However, this calibration parity did not carry over to ranking: alternative methods ranked known essential genes
-more strongly.  Average precision was 0.838 for BARCS and 0.874--0.877 for
+MAGeCK-MLE.  Aggregation-aware calibration removed the earlier
+separation of MAGeCK-MLE: control scaling is a method-agnostic operation, not a beta-binomial advantage.  The parity did not carry over to ranking; the four alternatives ranked known essential genes more strongly.  Average precision was 0.838 for BARCS and 0.874--0.877 for
 the four alternatives; directional recall at gene FDR 0.10 was 0.600 versus
 0.738--0.767.  At a matched empirical 5\% proxy-null rate, recall was 0.867
-versus 0.879--0.888. Thus, once calibration is assessed at the same aggregation level for every method, BARCS matches its competitors in calibration but not in ranking sensitivity.
+versus 0.879--0.888.  Once calibration is assessed at the same aggregation level for every method, BARCS matches its competitors on calibration but falls behind on ranking sensitivity.
 
 \begin{figure}[htbp]
 \centering
