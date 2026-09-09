@@ -1,21 +1,27 @@
 % !TeX root = ../main.tex
 \begin{abstract}
 Pooled CRISPR screens increasingly use longitudinal, donor-adjusted, and
-factorial designs, but beta-binomial screen methods have largely remained
-limited to pairwise comparisons.  BARCS extends the
-library-total-conditional beta-binomial model to guide-level regression with
-an arbitrary design matrix, enabling direct estimation of time, covariate, and
-interaction effects.  In four replicate-complete Cas13 screens, adding the
-intermediate time point modestly improved essential-gene recovery.  Applying the same non-targeting-control scaling rule to BARCS, MAGeCK-MLE, edgeR-QL, DESeq2, and limma--voom produced similar calibration across all five methods, while the four alternatives ranked essential genes more strongly than BARCS.  In
-an ordered-bin IL2RA screen, donor-adjusted BARCS recovered more validated
-regulators with fewer total calls than the matched four-bin MAGeCK-MLE fit,
-and cross-fitted controls exposed excess guide-level significance.
-Simulations showed gains from dispersion moderation and control-based
-denominators, but seed-specific results exposed denominator sensitivity and a
-null grid localized substantial gene-level error to correlated-guide
-aggregation rather than dispersion alone.  Aggregation-matched control scaling
-reduced but did not eliminate this error.  An external
-audit prompted by concerns about beta-binomial false discoveries showed that
-the reported CB\textsuperscript{2} null-discovery count disappeared when
-full-library totals were restored. This corrected one denominator-dependent result but did not refute the broader calibration concern; nominal-level calibration remained unresolved. BARCS therefore contributes a multivariable extension of the library-total-conditional beta-binomial model together with an explicit account of where its inference is valid: guide-level coefficients are supported by independent biological libraries, whereas gene-level summaries and partitioned-bin designs require correlation-aware aggregation or joint modelling that the present implementation provides diagnostically rather than generatively. We report this boundary because complex pooled designs make it consequential, not because it is unique to the beta-binomial model.
+factorial designs, whereas beta-binomial screen methods have largely focused
+on pairwise comparisons.  BARCS extends the library-total-conditional
+beta-binomial model to guide-level regression with an arbitrary design matrix,
+enabling estimation of time, covariate, and interaction effects.  In four
+replicate-complete Cas13 screens, adding the intermediate time point modestly
+improved essential-gene recovery.  Applying the same non-targeting-control
+scaling rule to BARCS, MAGeCK-MLE, edgeR-QL, DESeq2, and limma--voom produced
+similar calibration diagnostics, although the alternatives ranked essential
+genes more strongly.  In an ordered-bin IL2RA screen, donor-adjusted BARCS
+recovered 22 validated regulators with 49 calls, compared with 17 regulators
+and 72 calls for the matched MAGeCK-MLE fit.  Cross-fitted control scaling
+reduced the guide-level null $p<0.05$ rate from 0.133 to 0.049.  Simulations
+showed gains from dispersion moderation and control-based denominators, with
+substantial variation in the denominator effect across seeds.  A null grid
+isolated gene aggregation under within-gene guide dependence as a source of
+error; aggregation-matched control scaling reduced but did not eliminate the
+inflation.  An external audit also identified a denominator-dependent
+CB\textsuperscript{2} false-discovery result, while leaving broader calibration
+concerns unresolved.  BARCS enables multivariable analysis within the
+beta-binomial CRISPR model.  Its inferential use depends on independent
+biological libraries, likelihood-compatible counts, and calibration evaluated
+at the level of the reported statistic; correlated guides and partitioned bins
+require further modeling.
 \end{abstract}

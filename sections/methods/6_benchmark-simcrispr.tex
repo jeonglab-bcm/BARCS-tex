@@ -1,14 +1,13 @@
 % !TeX root = ../../main.tex
 \subsubsection{simCRISPR interaction benchmark}
 
-CRISPulator assigns each guide a single effect and sorts cells on a
-phenotype, so it cannot generate the design BARCS is aimed at.  simCRISPR
-\citep{zhu2026simcrispr} simulates a factorial screen instead: knockout
+The CRISPulator benchmark above tests an ordered phenotype.  To evaluate
+a factorial interaction, we used simCRISPR \citep{zhu2026simcrispr}, which
+simulates knockout
 induction crossed with treatment, propagated over several days of cell
 growth, with PCR amplification and sequencing applied afterwards.  Every
 sgRNA therefore carries a knockout effect, a treatment effect, and an
-interaction between the two, and that interaction is a coefficient in a
-design matrix rather than a contrast of two arms.
+interaction between the two, estimated with an explicit design-matrix column.
 
 Each of three seeds generated 2,000 sgRNAs, of which 300 were non-targeting
 and 200 were safe-harbor controls, in three independent replicates of each of
@@ -25,15 +24,15 @@ $\beta_3$.
 
 Three denominators were compared.  The library denominator is the full column
 total, BARCS's default.  The two control denominators hold a chosen control
-class at a constant share, rescaled to the mean library size and rounded, so
-that they remain interpretable as library sizes.  The two control classes are
-not interchangeable: safe-harbor guides are cut and carry the DNA-damage
-response, non-targeting guides are neither.  Each control class was split in
-half, one half normalizing and calibrating and the other held out, so that no
-guide used to fit the null was also scored against it.  MAGeCK-MLE received
-the same design matrix with an explicit interaction column, the same
-calibration-half controls, and one sgRNA per gene, because the simulated truth
-is guide-level.
+class at a constant share, rescaled to the mean library size and rounded to
+produce effective library totals.  These normalized totals define a
+control-relative analysis.  The two control classes are not interchangeable:
+safe-harbor guides are cut and carry the DNA-damage response, non-targeting
+guides are neither.  Each control class was split in half, one half
+normalizing and calibrating and the other held out, so that no guide used to
+fit the null was also scored against it.  MAGeCK-MLE received the same design
+matrix with an explicit interaction column, the same calibration-half
+controls, and one sgRNA per gene, because the simulated truth is guide-level.
 
 CRISPhieRmix was not run on these data.  It borrows strength across the guides
 within a gene, whereas simCRISPR assigns every sgRNA an independent

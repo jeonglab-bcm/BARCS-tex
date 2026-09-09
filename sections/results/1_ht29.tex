@@ -1,6 +1,5 @@
 % !TeX root = ../../main.tex
-\subsection{HT-29 serial harvests are descriptive, not replicated longitudinal
-inference}
+\subsection{HT-29 serial harvests provide descriptive trajectory scores}
 
 The HT-29 dataset of \citet{tzelepis2016dropout} contains one plasmid pool and
 guide counts from days 7, 10, 13, 16, 19, 22, and 25 of one passaged culture.
@@ -47,11 +46,10 @@ Deposited BAGEL2 day 25 & 0.9698 & 0.9388 & $-12.06$ & 0.8630 & 4\\
 In Table~\ref{tab:chronos}, the day-25 MAGeCK row has the highest AUROC and
 Recall$_{90}$ in the deposited comparison.  The full trajectory therefore
 provides no measured advantage over the endpoint on these two ranking metrics.
-Official continuous-time MAGeCK
-has the highest PR AUC, Chronos has the most negative NNMD, and BAGEL2 has the
-fewest unexpressed genes in the 10\% tail.  These differences illustrate that
-the metrics reward different score properties; none supplies the missing
-biological replication.
+Official continuous-time MAGeCK has the highest PR AUC, Chronos has the most
+negative NNMD, and BAGEL2 has the fewest unexpressed genes in the 10\% tail.
+The metrics favor different score properties.  Their interpretation remains
+descriptive because the biological lineage was not replicated.
 
 How a deposited time course is summarized also matters.  Taking the median
 MAGeCK effect across all seven days instead of the day-25 column lowers AUROC

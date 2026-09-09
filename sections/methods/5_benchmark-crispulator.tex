@@ -8,10 +8,10 @@ simulation seed, one CRISPRn guide library was constructed and reused across
 four independently seeded transfection, sorting, and sequencing replicates.
 The default CRISPulator phenotype mixture was retained: 75\% inactive, 5\%
 negative-control, 10\% phenotype-increasing, and 10\%
-phenotype-decreasing genes.  The headline screens contained 10,000 genes and
+phenotype-decreasing genes.  The primary screens contained 10,000 genes and
 five guides per gene, so 50,000 guides, which is the order of a genome-wide
-library rather than a pilot.  The default guide-quality mixture---90\%
-complete-knockout guides and 10\% low-activity guides---was retained.
+library rather than a pilot.  The default guide-quality mixture (90\%
+complete-knockout guides and 10\% low-activity guides) was retained.
 Transfection representation was 500 cells per guide, Gaussian phenotype noise
 was 2, sorting representation was 50 cells per guide, and sequencing depth was
 50 reads per guide per sample.  Multiplicity of infection was 0.20 for the
@@ -23,19 +23,19 @@ MOI 0.30 appears in the threshold sensitivity figure.  The supporting
 400-gene analyses use seeds 20250724 through 20250728.
 
 Two BARCS gene statistics are carried through the genome-scale ablation.
-BARCS-ST is the historical calibrated signed-$z$ statistic.  BARCS-MOD reuses
-the identical guide fits after guide-dispersion moderation, so the two differ
-only in how the guide variance is estimated, not in the gene combiner.
-Official MAGeCK-MLE 0.5.9.5 and CRISPhieRmix are included in that run,
-but this restricted set is not treated as an exhaustive comparator panel.
+BARCS-ST uses the calibrated signed-$z$ statistic without variance moderation.
+BARCS-MOD reuses the identical guide fits after guide-dispersion moderation,
+so the two differ only in how the guide variance is estimated, not in the gene
+combiner. Official MAGeCK-MLE 0.5.9.5 and CRISPhieRmix are included in that
+run, but this restricted set is not treated as an exhaustive comparator panel.
 MAGeCK-MLE's ordered marker is affinely mapped onto zero--one so that the low
-samples of the reference
-replicate form the all-zero reference row the MAGeCK initializer requires.
-Because MAGeCK-MLE omits negative-control genes from its gene summary once
-their sgRNAs are declared, all methods in the genome-scale benchmark are
-scored on the genes every method returned a finite result for, 9,475--9,517
-of 10,000 per run.  The negative-control diagnostic is instead taken from
-each method's own output, and is therefore unavailable for MAGeCK-MLE.
+samples of the reference replicate form the all-zero reference row the MAGeCK
+initializer requires. Because MAGeCK-MLE omits negative-control genes from its
+gene summary once their sgRNAs are declared, all methods in the genome-scale
+benchmark are scored on the genes every method returned a finite result for,
+9,475--9,517 of 10,000 per run.  The negative-control diagnostic is instead
+taken from each method's own output, and is therefore unavailable for
+MAGeCK-MLE.
 
 CRISPulator's arbitrary percentile ranges were set to $(0,0.25)$ for low,
 $(0.75,1)$ for high, and $(0,1)$ for bulk.  Thus bulk deliberately overlaps

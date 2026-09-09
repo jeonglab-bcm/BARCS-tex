@@ -1,59 +1,54 @@
 % !TeX root = ../main.tex
-Pooled CRISPR screens increasingly combine multiple design dimensions, including time courses, ordered FACS fractions, donor cohorts, dose series, and factorial treatment arms, within a single environment. Their
-scientific quantities of interest are slopes, adjusted associations, and interactions.
-Reducing these experiments to repeated high-versus-low contrasts discards
-intermediate observations and prevents one effect from being estimated
-conditional on the remaining design variables.
+Pooled CRISPR screens increasingly combine time courses, ordered FACS
+fractions, donor cohorts, dose series, and factorial treatment arms.  These
+experiments ask about slopes, adjusted associations, and interactions.
+Reducing them to repeated high-versus-low comparisons discards intermediate
+observations and prevents estimation of one effect conditional on the other
+design variables.
 
-The count denominator is central to this problem.  RNA-sequencing methods
-generally model marginal counts with negative-binomial distributions and
-represent library size through normalization or an offset, which is appropriate when no natural total is available for a gene's count to be conditioned on
-\citep{marioni2008rnaseq,anders2010deseq,love2014deseq2,law2014voom,
-lun2016edger}.  In a pooled
-screen, however, each guide count is observed together with the total number
-of mapped guide reads in that library, and conditional on this total, guide
-abundance is a proportion rather than an unconstrained count.  The beta-binomial model represents that sampling
-structure directly, separating depth-dependent sequencing variation from
+The count denominator determines how guide abundance is modeled.
+Negative-binomial methods generally model marginal counts and account for
+library size through normalization or an offset
+\citep{marioni2008rnaseq,anders2010deseq,love2014deseq2,lun2016edger}.
+In a pooled screen, each guide count is observed together with the total number
+of mapped guide reads in its library.  Conditioning on that total treats guide
+abundance as a proportion.  A beta-binomial model represents this sampling
+structure and separates depth-dependent sequencing variation from
 heterogeneity among biological libraries.  The original
-CB\textsuperscript{2} study found better goodness of fit for beta-binomial than
-negative-binomial models in pooled CRISPR counts \citep{jeong2019beta}.
+CB\textsuperscript{2} study reported better goodness of fit for beta-binomial
+than negative-binomial models in pooled CRISPR counts \citep{jeong2019beta}.
 
-CB\textsuperscript{2} applies this principle to two independent groups, whereas
-modern screen designs require a general coefficient model.  Beta-binomial
-regression is available in \texttt{corncob} and statistical packages including
-\texttt{aod}, \texttt{VGAM}, and \texttt{gamlss}
+CB\textsuperscript{2} applies this principle to two independent groups.
+Beta-binomial regression is available in \texttt{corncob} and statistical
+packages including \texttt{aod}, \texttt{VGAM}, and \texttt{gamlss}
 \citep{martin2020corncob,lesnoff2012aod,yee1996vgam,rigby2005gamlss}, but these
-tools do not provide a CRISPR-oriented workflow that preserves immutable
-full-library totals, fits guide-level design matrices, and
-connects the result to established screen outputs.  Conversely, negative-binomial
-screen and RNA-sequencing methods, among them MAGeCK-MLE \citep{li2014mageck},
-edgeR-QL \citep{lun2016edger}, DESeq2 \citep{love2014deseq2}, and limma--voom
-\citep{law2014voom}, already accept an arbitrary design matrix, and the
-comparisons reported below confirm that they do so competitively.  The open
-question is therefore not whether a multivariable screen analysis is possible,
-but whether the library-total-conditional sampling model---the one component
-that CB\textsuperscript{2} showed to fit pooled counts better than a marginal
-negative-binomial model---can be carried into that setting, and what doing so
-does and does not buy.  Specialized methods such
-as Chronos and Waterbear model population dynamics or joint FACS-bin
-membership, respectively, but are tied to those experimental structures
-\citep{dempster2021chronos,pimentel2024waterbear}.
+tools lack a CRISPR-oriented workflow connecting full-library totals,
+guide-level regression, and screen-level outputs.  Established screen and
+RNA-sequencing methods, including MAGeCK-MLE \citep{li2014mageck}, edgeR-QL
+\citep{lun2016edger}, DESeq2 \citep{love2014deseq2}, and limma--voom
+\citep{law2014voom}, already support multivariable designs.  Chronos and
+Waterbear provide specialized models for population dynamics and joint
+FACS-bin membership, respectively
+\citep{dempster2021chronos,pimentel2024waterbear}.  These methods provide
+comparators for assessing the practical value of extending the beta-binomial
+screen model.
 
 We developed BARCS (Beta-binomial Analysis and Regression for CRISPR Screens)
-to answer that question.  BARCS keeps the library-total-conditional
-beta-binomial sampling model and replaces two group means with a regression
-design matrix.  A single fit can estimate time, donor-adjusted abundance,
-treatment, or interaction effects.  Independent biological libraries, rather
-than individual reads, determine the residual degrees of freedom.  This
-generalizes the range of questions CB\textsuperscript{2} can address; it does not
-require the two implementations to share the same estimator or finite-sample
-test.
+to carry the library-total-conditional model into multivariable analysis.
+BARCS replaces two group means with a regression design matrix, allowing a
+single fit to estimate time, donor-adjusted abundance, treatment, or interaction
+effects.  Independent biological libraries determine the residual degrees of
+freedom.  Guide-level estimation is followed by optional dispersion moderation,
+gene aggregation, and control-based calibration.  The default denominator
+retains full-library totals through guide filtering; a separate control-based
+normalization option estimates effects relative to a chosen control class.
 
-We evaluate the extension in increasing order of design complexity and decreasing order of experimental control.  A
-three-time-point Cas13 screen tests longitudinal coefficients across four
-replicate-complete cell lines.  An IL2RA screen tests a donor-adjusted ordered
-phenotype against independently validated regulators and held-out
-non-targeting guides.  Genome-scale and factorial simulations then isolate
-dispersion moderation and denominator choice against a known ground truth, including a null-calibration grid that identifies within-gene guide correlation, rather than dispersion alone, as a source of gene-level miscalibration.  Finally, an
-external audit examines how pre-fit subsetting can change the effective library
-total and an apparent false-discovery result.  Together, these analyses assess where the multivariable beta-binomial extension improves on pairwise comparisons, where it matches rather than exceeds existing negative-binomial methods, and where its calibration still requires independent validation.
+We first describe the BARCS workflow and evaluate its longitudinal and
+covariate-adjusted coefficients in Cas13 and IL2RA screens.  Genome-scale and
+factorial simulations then test dispersion moderation and denominator choice
+against known truth.  A null-calibration grid examines the consequences of
+combining correlated guides, and an external audit assesses the effect of
+pre-fit subsetting on a published false-discovery result.  These analyses
+establish the uses and limitations of multivariable beta-binomial regression,
+including the distinction between recovering biological signals and obtaining
+calibrated guide- or gene-level probabilities.

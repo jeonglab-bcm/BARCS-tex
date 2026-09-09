@@ -1,6 +1,5 @@
 % !TeX root = ../../main.tex
-\subsection{The intermediate Cas13 time point improves recovery, whereas
-control scaling is method-agnostic}
+\subsection{An intermediate Cas13 time point modestly improves recovery}
 \label{sec:liang}
 
 The Cas13 fitness screens of \citet{liang2026lncrna} contain measurements at
@@ -24,7 +23,8 @@ three-time-point fit increased macro-average precision from 0.832 to 0.838 and
 directional essential-gene recall at FDR 0.10 from 0.538 to 0.600.  Recall at
 an empirical 5\% proxy-null false-positive rate increased from 0.858 to 0.867.
 The proxy-null $p<0.05$ rate changed from 0.038 to 0.039.  Thus day 7
-improved essential-gene recovery modestly, while leaving some calibration measures unchanged.  Both proxy-null quantities
+improved essential-gene recovery modestly with little change in the
+proxy-null rejection rate.  Both proxy-null quantities
 depend on a definition that is itself imperfect.  Cell-line-specific nulls are
 targeted lncRNAs with TPM equal to zero in both available expression assays, so
 limited expression sensitivity and RfxCas13d collateral activity can each place
@@ -39,22 +39,21 @@ guide counts sampled from the target-gene distribution.  The same tail-scaling
 rule was then applied to each method's native pseudo-gene summary.  Mean
 cell-line-specific absolute calibration error was 0.0207 for BARCS, 0.0198 for
 DESeq2, 0.0181 for edgeR-QL, 0.0178 for limma--voom, and 0.0171 for
-MAGeCK-MLE.  Thus aggregation-aware calibration removed the earlier
-MAGeCK-MLE separation: control scaling is a method-agnostic operation, not a
-beta-binomial advantage. However, this calibration parity did not carry over to ranking: alternative methods ranked known essential genes
-more strongly.  Average precision was 0.838 for BARCS and 0.874--0.877 for
+MAGeCK-MLE.  The calibration diagnostics were therefore similar after the common
+scaling rule.  The four alternatives ranked known essential genes more
+strongly.  Average precision was 0.838 for BARCS and 0.874--0.877 for
 the four alternatives; directional recall at gene FDR 0.10 was 0.600 versus
 0.738--0.767.  At a matched empirical 5\% proxy-null rate, recall was 0.867
-versus 0.879--0.888. Thus, once calibration is assessed at the same aggregation level for every method, BARCS matches its competitors in calibration but not in ranking sensitivity.
+versus 0.879--0.888.  Similar proxy-null diagnostics thus coexisted with
+lower ranking sensitivity for BARCS.
 
-\begin{figure}[htbp]
+\begin{figure}[!htbp]
 \centering
 \includegraphics[width=\textwidth]{figures/liang_longitudinal_volcano_trajectories.pdf}
 \caption{\textbf{Longitudinal Cas13 sensitivity analysis using days 0, 7, and
 14.}  (A--E) Gene-level results for BARCS, MAGeCK-MLE, edgeR-QL, DESeq2, and
 limma--voom across the four replicate-complete cell lines.  All five panels
-share one x and y scale and one set of tick marks, so effect sizes are directly
-comparable between methods.  The x axis is the signed logarithmic transform
+use common axis scales to display the method-specific effect estimates.  The x axis is the signed logarithmic transform
 $\mathrm{sign}(\beta)\log_{10}(1+|\beta|/0.25)$, labelled at the untransformed
 effect values.  The horizontal line marks two-sided $p=0.05$; $-\log_{10}(p)$
 is clipped at 60, clipped points are triangles, and the count above each panel
@@ -74,8 +73,8 @@ not its prevalence.}
 \label{fig:liang}
 \end{figure}
 
-The gene-level method comparison and three prespecified guide-level
-disagreement trajectories are shown together in Figure~\ref{fig:liang}, linking
-the fitted longitudinal coefficient to the observed three-time-point patterns.
+Figure~\ref{fig:liang} combines the gene-level comparison with three
+guide trajectories selected by the stated disagreement rule.  These examples
+show the observed time patterns behind selected differences in significance.
 
 \FloatBarrier

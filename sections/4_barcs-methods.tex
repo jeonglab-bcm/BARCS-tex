@@ -1,88 +1,84 @@
 % !TeX root = ../main.tex
 \subsection{Model and inference}
 
-For guide $g$ in library $i$, BARCS models the count conditional on the
-unfiltered mapped-guide total:
-\begin{equation}
-K_{gi}\mid N_i\sim
-\operatorname{BetaBinomial}(N_i,\mu_{gi},\rho_g),
-\qquad
-\logit(\mu_{gi})=\mathbf{x}_i^\top\boldsymbol{\beta}_g .
-\label{eq:barcs-model}
-\end{equation}
-The coefficient model in Equation~\eqref{eq:barcs-model} allows the design
-vector to contain time, dose, donor, batch, treatment, and
-interaction terms.  Coefficients are estimated by beta-binomial weighted
-logistic regression.  A prespecified coefficient or contrast is divided by
-its model-based standard error and compared with a Student $t$ distribution
-using residual sample degrees of freedom.  All reported tests are two-sided,
-and guide- or gene-level probabilities are adjusted by Benjamini--Hochberg.
-The guide-specific overdispersion $\rho_g$ is estimated by solving the Pearson
-equation at the fitted mean, truncated at zero when the counts are not
-overdispersed, and the coefficient and dispersion updates are alternated to
-convergence.  BARCS-ST reports these unmoderated statistics.  BARCS-MOD
-additionally shrinks each guide's fitted variance toward a trend in log mean
-abundance by an empirical-Bayes step that changes standard errors and residual
-degrees of freedom but not the coefficient estimates; the real-data benchmarks
-use unmoderated BARCS.  The full estimating equations are given in the
-Supplement.
+For the model in Equation~\eqref{eq:barcs-model}, coefficients are estimated by
+feasible iteratively reweighted least squares.  At each fitted mean, the
+guide-specific overdispersion $\rho_g$ solves a Pearson equation and is
+truncated at zero when the counts are not overdispersed.  Coefficient and
+dispersion updates alternate to convergence.  A prespecified coefficient or
+contrast is divided by its model-based standard error and compared with a
+Student $t$ distribution using residual sample degrees of freedom.  This
+plug-in calculation does not fully propagate dispersion-estimation
+uncertainty.  Tests are two-sided, and guide- or gene-level probabilities are
+adjusted by Benjamini--Hochberg.
+
+BARCS-ST uses unmoderated guide statistics.  BARCS-MOD applies an
+empirical-Bayes variance adjustment based on a trend in log mean abundance,
+changing standard errors and reference degrees of freedom while retaining the
+coefficient estimates.  Real-data benchmarks use unmoderated BARCS.
+Supplementary Sections~\ref{sec:estimation} and \ref{sec:inference} give the
+estimating equations and moderation procedure.
 
 \subsection{Gene-level aggregation and control calibration}
 
-Guide coefficients are combined into a gene-level statistic by a prespecified
-directional Stouffer summary: each guide's two-sided probability is converted
-to a normal deviate carrying the sign of its coefficient, the deviates for a
-gene are combined by the Stouffer rule, and the result is returned to a
-two-sided gene probability, which is then adjusted by Benjamini--Hochberg.  The
-reported gene effect is the median guide coefficient.
+The primary gene summaries use directional Stouffer aggregation.  Each guide's
+two-sided probability is converted to a normal deviate carrying the sign of
+its coefficient.  The sum of these deviates is divided by the square root of
+the number of valid guides and converted to a two-sided gene probability.
+The gene effect is the median guide coefficient.  The exploratory DeWeirdt
+audit uses Fisher aggregation, as specified in Supplementary
+Section~\ref{sec:supp-fdr-audit}.
 
-Control calibration rescales a reported statistic without altering the
-coefficient estimates or their ranking.  Given a set of negative-control
-features, \texttt{bb\_calibrate\_controls()} maps the 95th percentile of the
-absolute signed-normal control statistic onto the two-sided standard-normal
-0.05 cutoff and divides by the resulting scale, with scales below one truncated
-at one so that the adjustment can only be conservative.  Two properties matter
-for interpretation.  First, the scale must be estimated at the same aggregation
-level as the statistic it corrects, because a scale learned from individual
-control guides does not transfer to multi-guide gene statistics; non-targeting
-guides are therefore grouped into pseudo-genes matching the target-gene
-guide-count distribution before the rule is applied to a gene-level summary.
-Second, the controls used to estimate the scale cannot also be used to evaluate
-it.  Wherever a control-based error rate is reported, the scale is obtained by
-deterministic five-fold cross-fitting and each fold is evaluated with the scale
-estimated from the other four.
+Control scaling divides a signed-normal statistic by the ratio of its control
+95th absolute percentile to the two-sided standard-normal 0.05 cutoff.
+Ratios below one are set to one, so scaling cannot increase significance at
+that reporting level.  Coefficient estimates remain unchanged.  This rule
+adjusts an empirical tail; it does not guarantee calibration throughout the
+null distribution.
 
-\paragraph{Validity of gene-level probabilities.}
-The directional Stouffer summary treats the guides of a gene as independent
-sources of evidence.  Guides targeting the same gene are generally positively
-correlated---through a shared target effect, a shared cutting response,
-copy-number-associated toxicity, clonal structure, or unmodeled library
-composition shifts---and under positive correlation the combined statistic is
-anti-conservative; the null-calibration grid in the Supplement quantifies the
-resulting gene-level error.  Gene-level probabilities are therefore reported as
-empirically calibrated ranking statistics rather than as tests carrying a
-nominal false-discovery guarantee.  Guide-level coefficients, their standard
-errors, and their ordering are unaffected by this limitation, and gene-level
-inference is recovered when the gene-level null is established by permutation
-that preserves the within-gene guide structure and the experimental blocking.
+The calibration unit and evaluation split differ by benchmark.  Cas13 uses
+non-targeting pseudo-genes matched to the target-gene guide-count distribution
+and applies the same rule after each method's gene summary.  Its reported
+proxy-null diagnostic uses unexpressed targeted lncRNAs.  IL2RA uses
+\texttt{bb\_calibrate\_controls()} at guide level, with deterministic five-fold
+cross-fitting for the reported control rate and all controls for the production
+fit.  CRISPulator scales guide statistics before Stouffer aggregation.
+simCRISPR splits each control class into normalization/calibration and evaluation
+halves.  The all-null grid learns a post-aggregation scale from one half of
+the null genes and evaluates the other half.  These distinctions prevent a
+guide-level control rate from being interpreted as evidence of gene-level
+calibration.
 
-\subsection{Denominator choice defines the estimand}
+The Stouffer denominator assumes independent null guide scores.  Shared
+artifacts or library effects can violate that assumption and inflate gene
+significance, as shown in Table~\ref{tab:calibration-grid}.  Matching the number
+of control guides per pseudo-gene also need not reproduce the dependence among
+guides targeting a gene.  The reported gene probabilities and nominal FDR
+thresholds therefore require empirical validation.  Permutations used for that
+purpose must preserve experimental blocking and within-gene guide structure.
 
-The two denominators available in BARCS answer different questions and are not
-interchangeable.  Under the full-library total, $\beta$ is the change in a
-guide's share of the sequenced library.  This quantity is always well defined,
-but it coincides with the change in absolute guide abundance only when the
-overall library composition is stable across the design; when a large fraction
-of guides deplete, every surviving guide's share rises and true-null guides
-acquire a positive shift (Figure~\ref{fig:simcrispr}).  Under a control-set
-denominator, $\beta$ is the change relative to that control set, and it
-identifies the absolute effect under the assumption that the control set is
-invariant across design levels.  That assumption should be checked rather than
-assumed, by comparing the control set's share of the library across design
-levels.  Non-targeting controls are the efficient choice when the quantity of
-interest is a targeted effect; safe-harbor controls additionally absorb the
-shared cutting response and are preferred in Cas9 knockout screens with
-widespread depletion.
+\subsection{Denominator choice and effect interpretation}
+
+The default denominator is the full mapped-guide total, recorded before guide
+filtering and retained throughout fitting.  A coefficient describes a change
+in the log odds of library share; for small guide proportions, it approximates
+a log abundance ratio per unit of the predictor.  Widespread depletion can
+increase the library share of unchanged guides
+(Figure~\ref{fig:simcrispr}), so relative abundance alone does not establish an
+absolute change.
+
+Control-based denominators deliberately replace that reference with a
+prespecified control class.  The simCRISPR analysis rescales control totals to
+the mean library size and rounds them, as detailed in the Supplement.  These
+are normalization-derived effective totals, so the literal full-library
+sampling interpretation requires separate assessment.  Effects are relative
+to the chosen controls; an absolute-abundance interpretation additionally
+depends on their invariance.  A control class's library share alone cannot
+establish that invariance because the rest of the library may also change.
+Non-targeting controls provide a reference without cutting, whereas safe-harbor
+controls include the shared cutting response.  This explicit normalization
+choice differs from unintentionally changing the denominator by subsetting
+before fitting.
 
 \subsection{Longitudinal Cas13 analysis}
 
@@ -97,9 +93,9 @@ days 0 and 14 tested the value of the intermediate time point.  Known
 essential genes were positives; targeted lncRNAs with TPM equal to zero in
 both available expression assays were proxy nulls.  That definition is
 imperfect in a direction that favours conservative methods, so the proxy-null
-rates are diagnostics rather than validated type-I errors.  Because the deposited values were already normalized and
-ComBat-corrected, this analysis was treated as a processed-count sensitivity
-study.
+rates are diagnostics rather than validated type-I errors.  Because the
+deposited values were already normalized and ComBat-corrected, this analysis
+was treated as a processed-count sensitivity study.
 
 \subsection{Ordered-bin IL2RA analysis}
 
@@ -121,7 +117,11 @@ guide-dispersion moderation.  simCRISPR generated three factorial
 knockout-by-treatment screens with 2,000 sgRNAs and three replicates per arm.
 Its known interaction effects allowed direct comparison of full-library,
 non-targeting, and safe-harbor denominators.  Control guides used for
-normalization and calibration were held out from scoring.
+normalization and calibration were held out from scoring in simCRISPR.
+The all-null beta-binomial grid varied library number, abundance, dispersion,
+and guides per gene, with a focused correlated-guide arm.  Calibration
+specifications are given in Supplementary
+Section~\ref{sec:supp-calibration}.
 
 \subsection{External and supplementary analyses}
 
@@ -130,6 +130,5 @@ CB\textsuperscript{2} probabilities using full-library totals and ran BARCS on
 the deposited PSN1 and DeWeirdt normalized tables.  Supplementary analyses
 include the serial-harvest HT-29 screen, a four-coefficient GSE70038 screen
 with method-specific pathway enrichment, and the Sanson A375 endpoint and
-copy-number audit.  The Supplement reports their complete preprocessing,
-design, and scoring definitions in the same order as the corresponding
-results.
+copy-number audit.  The Supplement provides detailed preprocessing, design, and scoring
+definitions, together with the complete external audit.

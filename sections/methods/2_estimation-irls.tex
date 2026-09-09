@@ -1,7 +1,8 @@
 % !TeX root = ../../main.tex
 \subsection{Estimation by feasible IRLS}
+\label{sec:estimation}
 
-The beta-binomial regression can be written hierarchically as
+Suppressing the guide index, the beta-binomial regression is
 \begin{align}
   K_i\mid P_i &\sim \operatorname{Binomial}(N_i,P_i),\\
   P_i &\sim \operatorname{Beta}(\mu_i\kappa,(1-\mu_i)\kappa),
@@ -38,8 +39,7 @@ The coefficient update is the weighted least-squares step
   \qquad W=\operatorname{diag}(w_1,\ldots,w_m).
   \label{eq:betaupdate}
 \end{equation}
-This is weighted least squares on the logistic working response, not on the raw
-proportions.
+The update applies weighted least squares to the logistic working response.
 
 For a fixed fitted mean, $\rho$ is estimated from the Pearson equation
 \begin{equation}
@@ -53,7 +53,7 @@ If the left side at $\rho=0$ is no larger than $m-q$, the estimate is truncated
 at zero rather than claiming negative overdispersion.  Equations
 \eqref{eq:irls}--\eqref{eq:rho} are alternated to convergence.
 
-The weight has an important limiting behavior:
+For positive dispersion, the weight approaches a finite limit:
 \begin{equation}
   \lim_{N_i\rightarrow\infty} w_i
   = \frac{\mu_i(1-\mu_i)}{\rho}

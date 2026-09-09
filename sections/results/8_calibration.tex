@@ -1,0 +1,68 @@
+% !TeX root = ../../main.tex
+\subsection{Guide dependence limits gene-level calibration}
+\label{sec:calibration}
+
+The preceding benchmarks use control diagnostics at different reporting
+levels.  To examine the effect of aggregation directly, we simulated all-null
+beta-binomial screens across sample sizes, mean guide counts, and dispersions,
+with three or five guides per gene.  A focused arm introduced within-gene
+guide correlation of 0.4.  Odd-numbered null genes estimated a control scale
+after Stouffer aggregation, and even-numbered null genes evaluated it.  The
+full grid and a separate continuous-dose diagnostic are described in
+Supplementary Section~\ref{sec:supp-calibration}.
+
+Under independent guides, the largest five-seed mean gene-level $p<0.05$ rate
+was 0.074.  In the correlated-guide arm, guide-level rejection rates remained
+near or below 0.05, while gene-level rates reached 0.108--0.262
+(Table~\ref{tab:calibration-grid}).  Aggregation-matched held-out scaling
+reduced these rates to 0.056--0.112 but did not remove the inflation,
+particularly with five guides per gene.  These results locate a source of
+miscalibration in the independence assumption of the gene combiner.  A
+near-nominal guide-level diagnostic alone is insufficient to establish
+calibration of the reported gene probabilities.
+
+\begin{table}[htbp]
+\centering
+\caption{Null calibration before and after gene aggregation.  Entries are
+ranges of five-seed mean rejection rates across the applicable grid cells.
+The held-out column applies a scale learned from a disjoint half of the null
+genes after the same aggregation.  ``Mod. denotes guide-variance
+moderation.  Rejection uses $p<0.05$, with a target rate of 0.05.}
+\label{tab:calibration-grid}
+\small
+\setlength{\tabcolsep}{3.5pt}
+\begin{tabular}{llrccc}
+\toprule
+Guide dependence & Guides & Mod. & Guide & Gene & Held-out gene\\
+\midrule
+Independent & 3 & No  & 0.000--0.058 & 0.002--0.064 & 0.000--0.076\\
+Independent & 3 & Yes & 0.000--0.060 & 0.002--0.074 & 0.004--0.088\\
+Independent & 5 & No  & 0.000--0.056 & 0.004--0.064 & 0.004--0.064\\
+Independent & 5 & Yes & 0.000--0.060 & 0.026--0.074 & 0.012--0.060\\
+Correlated ($r=0.4$) & 3 & No  & 0.027--0.043 & 0.124--0.144 & 0.060\\
+Correlated ($r=0.4$) & 3 & Yes & 0.000--0.030 & 0.108--0.140 & 0.056--0.068\\
+Correlated ($r=0.4$) & 5 & No  & 0.029--0.048 & 0.232--0.254 & 0.104--0.112\\
+Correlated ($r=0.4$) & 5 & Yes & 0.000--0.041 & 0.224--0.262 & 0.068--0.076\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Denominator sensitivity in an external audit.}
+An audit of the benchmark deposited by \citet{dempster2025fdr,dempster2025fdrdata}
+examined a separate source of error: changing library totals by restricting
+the input to null genes before fitting.  Because H.-H.J.\ also developed
+CB\textsuperscript{2}, this is an audit of an author's prior method.
+For the same Avana null genes, restoring full-library CB\textsuperscript{2}
+probabilities reduced discoveries at FDR 0.10 from 152 to zero.  BARCS was not
+fitted in that comparison.  The largest cell-line-specific null $p<0.05$ rate
+remained 0.145, so the corrected discovery count does not establish nominal
+calibration.
+
+BARCS analyses of the deposited normalized PSN1 and DeWeirdt tables provided
+mixed diagnostics.  PSN1 produced no gene calls and guide-level $p<0.05$ rates
+of 0.0481 before scaling and 0.0465 after scaling.  In DeWeirdt, BARCS recovered
+one of 28 curated interactions, and 37 of its 38 calls arose in one comparison.
+The complete audit is reported in Supplementary
+Section~\ref{sec:supp-fdr-audit}.  Together with the null grid, these results
+show why denominator preservation, guide dependence, and independent control
+evaluation must each be addressed when interpreting a discovery threshold.

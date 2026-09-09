@@ -1,12 +1,11 @@
 % !TeX root = ../../main.tex
-\subsection{A covariate-adjusted ordered phenotype recovers validated
-regulators}
+\subsection{Donor-adjusted ordered-bin analysis recovers validated regulators}
 \label{sec:facs}
 
-We next asked whether the design-matrix extension is useful outside a time
-course.  GSE242880 contains an IL2RA protein-abundance screen in primary human
-T cells, with four ordered FACS bins for each of three donors, 6,000 guides,
-and 26 regulators validated by individual knockout and flow cytometry
+We next evaluated donor adjustment in an ordered phenotype screen.  GSE242880
+contains an IL2RA protein-abundance screen in primary human T cells, with four
+ordered FACS bins for each of three donors, 6,000 guides, and 26 regulators
+validated by individual knockout and flow cytometry
 \citep{freimer2022il2ra,pimentel2024waterbear}.  The four bins were assigned
 prespecified latent normal locations, and BARCS fitted one marker-abundance
 slope with donor indicators.  Official MAGeCK-MLE received the same design.
@@ -68,13 +67,12 @@ panel-hit fractions of 44.9\% and 23.6\%, respectively; these fractions do not
 classify the remaining calls as false.  Relative to raw four-bin BARCS,
 control calibration reduced the call set from 127 to 49 while retaining 22 of
 the 23 validated regulators recovered by the raw analysis.  The held-out NTC
-rate simultaneously moved from 0.133 to 0.049, showing why the calibrated
-four-bin result is the primary BARCS operating point.
+rate simultaneously moved from 0.133 to 0.049, supporting the calibrated
+four-bin result as the primary BARCS operating point.
 
 The specialist models remain important comparators.  Waterbear recovered 24
 validated regulators and MAUDE recovered 25, but with 79 and 406 discoveries.
-BARCS therefore offered the strongest recovery-per-discovery ratio among the
-four-bin models shown, while Waterbear remained the more faithful generative
-model for correlated sorted bins.  Negative controls diagnose the independence
-violation and calibrate one operating point; they do not make the bin margins
-independent.
+BARCS had the highest validation-panel fraction among the call sets shown.
+Waterbear explicitly models the dependence among sorted bins.  Negative
+controls diagnose the independence violation and calibrate one operating
+point; they do not make the bin margins independent.

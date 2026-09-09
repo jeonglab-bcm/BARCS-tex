@@ -1,73 +1,60 @@
 % !TeX root = ../main.tex
-BARCS extends a CRISPR-specific beta-binomial sampling principle from two
-groups to arbitrary design matrices.  The contribution is the coefficient
-model: time, donor, treatment, and interaction effects can be estimated while
-each guide remains conditional on its full mapped-guide total.  The Liang
-ablation provides direct, if modest, evidence for the longitudinal extension.
-Adding day 7 increased average precision from 0.832 to 0.838 and
-FDR-0.10 essential-gene recall from 0.538 to 0.600 relative to an endpoint
-fit, while the associated proxy-null rate was essentially unchanged
-(0.038 versus 0.039).
+BARCS extends the library-total-conditional beta-binomial CRISPR model to
+multivariable regression.  Its practical contribution is a common coefficient
+interface for time courses, covariate adjustment, and factorial interactions,
+with explicit treatment of library totals and control diagnostics.  The
+sampling model determines how sequencing depth and between-library variation
+enter the fit; the design matrix determines which biological question the
+coefficient addresses.
 
-The like-for-like Liang reanalysis changes the calibration interpretation.
-All five methods received the same non-targeting-control scaling after the
-controls were grouped to match the target-gene guide-count distribution.
-This makes the diagnostic aggregation-aware rather than transferring a
-one-guide scale to multi-guide gene statistics.  Mean absolute calibration
-errors were similar (0.0171--0.0207), with MAGeCK-MLE numerically closest to
-nominal and BARCS lower in ranking and FDR recall.  Control scaling remains a
-general calibration device rather than evidence for one count likelihood.
-Moreover, the matrix was normalized, ComBat-corrected, and rounded before
-fitting.  The result supports a practical coefficient analysis of that
-processed matrix, not a distributional claim that beta-binomial regression
-dominates negative-binomial regression.
+The biological examples support using that interface while showing different
+tradeoffs.  In Cas13, adding the intermediate time point improved
+essential-gene recovery modestly.  At the same time, all four alternative
+methods ranked essential genes more strongly, and aggregation-matched control
+scaling produced similar calibration diagnostics across methods.  The
+normalized, ComBat-corrected input further limits conclusions about the
+underlying count likelihoods.  In IL2RA, donor-adjusted BARCS recovered more
+validated regulators with fewer calls than the matched MAGeCK-MLE fit.
+Waterbear and MAUDE recovered more members of the validation panel, and the
+panel's limited coverage prevents interpreting recovery per call as positive
+predictive value.  The value demonstrated here is the ability to fit the
+specified effects and inspect their operating characteristics.
 
-The IL2RA analysis gives a complementary sensitivity--precision tradeoff.
-The calibrated four-bin BARCS fit recovered 22 validated regulators with 49
-calls, compared with 17 validated regulators among 72 calls for the matched
-four-bin MAGeCK-MLE fit.  Validated regulators therefore comprised 44.9\% and
-23.6\% of the respective call sets, but these are panel-hit fractions rather
-than estimates of positive predictive value: genes outside the limited
-validation panel were not individually tested and should not be labeled false.
-Cross-fitted non-targeting controls reduced the BARCS guide-level $p<0.05$ rate
-from 0.133 to 0.049, and a permuted fold assignment gave 0.052.  These
-diagnostics address the operating point; they do not remove the dependence
-among FACS bins drawn from the same donor.
+The simulation ablations separate two choices within BARCS.  Moderation
+improved genome-scale F1, although MAGeCK-MLE retained slightly stronger
+ranking and a lower realized FDP.  Control-based denominators improved
+interaction recovery in every simulated seed, with a much larger gain in the
+one seed where the full-library fit collapsed.  These denominator choices
+change the reference for abundance: full-library effects describe changes in
+library share, whereas control-based effects describe changes relative to the
+selected control class.  Non-targeting and safe-harbor controls also differ in
+whether they absorb the shared cutting response.  Their suitability depends
+on the biological effect being estimated and on the behavior of the controls.
 
-The simulations identify where BARCS still needs caution.  Dispersion
-moderation improved genome-scale F1, while MAGeCK-MLE slightly exceeded
-BARCS-MOD in AUROC and average precision at a substantially lower realized
-FDP.  In the interaction simulation, a control denominator improved all three
-seeds, but one full-library run collapsed; among the other two runs, F1
-increased from approximately 0.71 to 0.91.  This is a heterogeneous
-within-BARCS denominator ablation, not a valid between-method comparison.
-The expanded null grid did not reproduce the continuous-dose failure by
-increasing dispersion alone under independent guides.  Instead, the focused
-correlated-guide arm isolated the gene combiner: guide-level error remained
-near or below nominal while Stouffer gene-level error reached 0.108--0.262.
-Aggregation-matched held-out scaling reduced but did not eliminate that
-inflation.  Guide dependence must therefore be represented in calibration and
-in future hierarchical gene-level inference.
+Calibration is a separate requirement at each reporting level.  The IL2RA
+cross-fitting analysis supports a guide-level operating point, while the null
+grid shows that correlated guides can inflate Stouffer gene probabilities
+even when guide tests appear calibrated.  Scaling after matched aggregation
+reduced this inflation but left appreciable error in some cells.  The
+beta-binomial fit also uses plug-in dispersion estimates; a residual-$t$
+reference does not fully account for their uncertainty.  Nominal gene-level
+FDR thresholds in these analyses therefore lack a general calibration
+guarantee.  Dependence-aware gene aggregation and calibration using blocked
+permutations or independent controls are priorities for further development.
 
-The external audit corrects one benchmark result but does not refute the
-broader concern about beta-binomial anti-conservatism.
-The reported 152 CB\textsuperscript{2} Avana null discoveries did not survive
-restoration of the full-library denominator, demonstrating that pre-fit
-subsetting changed the statistical input.  This supports the
-denominator-corrected CB\textsuperscript{2} result and the same immutable-total
-contract used by BARCS, but it is not evidence of nominal beta-binomial
-calibration.  The largest Avana null $p<0.05$ rate remained 0.145, and BARCS
-recovered only one of 28 curated DeWeirdt interactions; both findings leave the
-broader calibration concern intact.
+The external audit reinforces the need to distinguish statistical inputs from
+inference.  Restoring full-library totals corrected the reported Avana
+CB\textsuperscript{2} discovery count, but the residual null inflation and poor
+DeWeirdt interaction recovery leave the broader calibration concern intact.
+Preserving totals through filtering prevents an unintended change in the
+model; it does not resolve the effects of dependence, processed counts, or
+comparison-specific confounding.
 
-The defensible conclusion is therefore narrower than a universal method
-ranking.  BARCS supplies a general beta-binomial coefficient model for
-multivariable CRISPR screens, and the longitudinal and ordered-bin analyses
-show the sensitivity that additional design columns can recover.  Confirmatory
-use requires independent biological libraries, likelihood-compatible counts,
-and calibration evaluated on held-out, cross-fitted, or independent controls
-matched to the aggregation level of the reported statistic.
-Repeated harvests from one culture and bins partitioned from one donor require
-blocked, repeated-measures, or joint-compositional models beyond the current
-independent-library fit.  These conditions define where the method is useful
-and where its probabilities should remain exploratory.
+BARCS is most directly interpretable with likelihood-compatible counts and
+independent biological libraries.  Repeated harvests from one culture and
+FACS bins partitioned from one donor require repeated-measures or joint models
+to represent their dependence.  Donor indicators adjust mean differences but
+do not supply that covariance structure.  For these designs, the present fits
+provide exploratory coefficients and control diagnostics.  Confirmatory
+applications require biological replication and validation of calibration at
+the guide or gene level at which discoveries are reported.

@@ -2,8 +2,8 @@
 \subsection{Nominal-versus-realized null calibration}
 \label{sec:supp-calibration}
 
-We first report the previously specified continuous-dose simulation because it
-exposes a finite-sample failure that a methods paper should not hide.  At a
+The prespecified continuous-dose simulation provides an initial
+finite-sample calibration diagnostic.  At a
 nominal 0.05 threshold, unmoderated BARCS had gene-level type-I error 0.081
 and empirical FDP 0.130; moderation reduced FDP to 0.091 but did not repair
 the marginal type-I error (Table~\ref{tab:calibration-diagnostic}).  Official
@@ -52,36 +52,12 @@ reports ranges across the applicable dispersion, abundance, and sample-size
 cells.  Complete parameter-by-parameter and seed-level values accompany the
 manuscript.
 
-\begin{table}[htbp]
-\centering
-\caption{Null calibration before and after gene aggregation.  Entries are
-ranges of five-seed mean rejection rates across the applicable grid cells.
-The held-out column applies a scale learned from a disjoint half of the null
-genes after the same aggregation.  The target rate is 0.05.}
-\label{tab:calibration-grid}
-\small
-\setlength{\tabcolsep}{3.5pt}
-\begin{tabular}{llrccc}
-\toprule
-Guide dependence & Guides & Mod. & Guide & Gene & Held-out gene\\
-\midrule
-Independent & 3 & No  & 0.000--0.058 & 0.002--0.064 & 0.000--0.076\\
-Independent & 3 & Yes & 0.000--0.060 & 0.002--0.074 & 0.004--0.088\\
-Independent & 5 & No  & 0.000--0.056 & 0.004--0.064 & 0.004--0.064\\
-Independent & 5 & Yes & 0.000--0.060 & 0.026--0.074 & 0.012--0.060\\
-Correlated ($r=0.4$) & 3 & No  & 0.027--0.043 & 0.124--0.144 & 0.060\\
-Correlated ($r=0.4$) & 3 & Yes & 0.000--0.030 & 0.108--0.140 & 0.056--0.068\\
-Correlated ($r=0.4$) & 5 & No  & 0.029--0.048 & 0.232--0.254 & 0.104--0.112\\
-Correlated ($r=0.4$) & 5 & Yes & 0.000--0.041 & 0.224--0.262 & 0.068--0.076\\
-\bottomrule
-\end{tabular}
-\end{table}
-
 Under independent guides, expanding dispersion through the continuous-dose
 range did not reproduce the 0.081 gene-level error: the largest five-seed mean
-was 0.074, and error did not increase monotonically with dispersion.  The
-continuous-dose failure therefore cannot be attributed to dispersion alone.
-In contrast, within-gene guide dependence left guide-level error near or below
+was 0.074, and error did not increase monotonically with dispersion.  This
+grid did not reproduce the continuous-dose result through dispersion alone;
+its different design and averaging across seeds also limit that comparison. In
+contrast, within-gene guide dependence left guide-level error near or below
 0.05 but raised gene-level error to 0.108--0.262.  Aggregation-matched
 split-control scaling reduced this range to 0.056--0.112, but did not fully
 repair the five-guide correlated cells.  The gene combiner and within-gene
@@ -93,6 +69,6 @@ Finally, the observed fraction of converged guide fits with
 $\widehat\rho=0$ was 11/86,840 (0.013\%) in HT-29, 0/5,999 in IL2RA, and
 1,738/280,541 (0.620\%) across the four Liang cell lines.  Boundary truncation
 is therefore common in the deliberately near-binomial grid but rare in the
-three real-data fits.  That observation rules out the boundary as a general
-explanation for their calibration behavior; limited independent-library
-degrees of freedom and the plug-in treatment of dispersion remain relevant.
+three real-data fits and appears unlikely to explain their calibration behavior
+in general.  Limited independent-library degrees of
+freedom and the plug-in treatment of dispersion remain relevant.

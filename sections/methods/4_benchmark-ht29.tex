@@ -3,21 +3,20 @@
 
 Guide counts for the HT-29 time course of \citet{tzelepis2016dropout} were
 obtained from Data S2 of that article through the Europe PMC supplementary
-bundle for PMC5081405.  The three sequencing columns reported
-at each of days 7, 10, 13, 16, 19, 22, and 25 were summed to one column per
-harvest and combined with the pDNA measurement, and guides with fewer than 30
-pDNA reads were removed, leaving 86,882 guides targeting 17,995 genes.  Library
-totals were computed before that filter and never recomputed, so the
-beta-binomial denominator remains the full mapped-read total for each sample;
-the filter removes 4.2\% of guides but only 0.10\% of reads, uniformly across
-samples.  BARCS
-and official MAGeCK-MLE 0.5.9.5 were both fitted to this eight-column matrix
-under an identical design, in which pDNA is day 0 and the tested predictor is
-day divided by 25, so the two continuous-time fits differ only in the
-likelihood.  A minimum total count of 30 was applied within the BARCS fit.
-Because all late samples are serial harvests of one culture, these fits are
-used as descriptive trajectory scores; their residual-$t$ or Wald
-probabilities are not interpreted as independent-sample inference.
+bundle for PMC5081405.  The three sequencing columns reported at each of days
+7, 10, 13, 16, 19, 22, and 25 were summed to one column per harvest and
+combined with the pDNA measurement, and guides with fewer than 30 pDNA reads
+were removed, leaving 86,882 guides targeting 17,995 genes.  Library totals
+were computed before that filter and never recomputed, so the beta-binomial
+denominator remains the full mapped-read total for each sample; the filter
+removes 4.2\% of guides but only 0.10\% of reads, uniformly across samples.
+BARCS and official MAGeCK-MLE 0.5.9.5 were both fitted to this eight-column
+matrix under an identical design, in which pDNA is day 0 and the tested
+predictor is day divided by 25, to match the tested continuous-time
+coefficient across methods.  A minimum total count of 30 was applied within
+the BARCS fit. Because all late samples are serial harvests of one culture,
+these fits are used as descriptive trajectory scores; their residual-$t$ or
+Wald probabilities are not interpreted as independent-sample inference.
 
 Comparator effects were not recomputed.  The joint Chronos, per-endpoint
 MAGeCK, and per-endpoint BAGEL2 effect matrices were taken as deposited in
