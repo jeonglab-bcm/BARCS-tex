@@ -19,8 +19,7 @@ $Y_i=K_i/N_i$,
 \end{equation}
 Equation~\eqref{eq:proportion-variance} separates sampling variation that
 decreases with sequencing depth from between-library heterogeneity that does
-not.  This extra-binomial variance formulation and its regression extension
-follow the line of work in \citet{williams1982extrabinomial,
+not.  The extra-binomial variance formulation and regression extension follow \citet{williams1982extrabinomial,
 baggerly2003differential,baggerly2004overdispersed}.
 
 Let $X$ be the $m\times q$ full-rank design matrix.  Given current values of
@@ -50,7 +49,7 @@ For a fixed fitted mean, $\rho$ is estimated from the Pearson equation
   =m-q. \label{eq:rho}
 \end{equation}
 If the left side at $\rho=0$ is no larger than $m-q$, the estimate is truncated
-at zero rather than claiming negative overdispersion.  Equations
+at zero to enforce nonnegative overdispersion.  Equations
 \eqref{eq:irls}--\eqref{eq:rho} are alternated to convergence.
 
 For positive dispersion, the weight approaches a finite limit:
@@ -59,9 +58,9 @@ For positive dispersion, the weight approaches a finite limit:
   = \frac{\mu_i(1-\mu_i)}{\rho}
   \quad\text{when }\rho>0.
 \end{equation}
-Therefore a deeply sequenced sample cannot acquire unlimited leverage.  Once
-sequencing uncertainty is small, biological heterogeneity sets the information
-ceiling.
+A sample's weight remains bounded as sequencing depth increases.  Once
+sequencing uncertainty is small, biological heterogeneity limits the
+information available.
 
 For a continuous design variable $x_d$, $\exp(\beta_d)$ is the fitted odds
 ratio for guide abundance per one-unit increase in $x_d$, conditional on the
@@ -70,6 +69,6 @@ small, $\beta_d$ also approximates the log abundance ratio per unit.  For a
 contrast, the same interpretation applies to the specified linear combination
 of coefficients.
 
-Screen-wide weighted cross-products are evaluated with RcppArmadillo
+BARCS evaluates screen-wide weighted cross-products with RcppArmadillo
 \citep{eddelbuettel2014rcpparmadillo}; guide fitting remains separable and can
 be distributed across processor cores.

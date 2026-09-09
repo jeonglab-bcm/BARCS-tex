@@ -10,18 +10,16 @@ At convergence, the model-based covariance estimator is
   \label{eq:covariance}
 \end{equation}
 The Pearson equation scales the residual variation to approximately one.  If
-the dispersion estimate reaches its numerical upper boundary, the
-implementation additionally multiplies Equation~\eqref{eq:covariance} by the
+the dispersion estimate reaches its numerical upper boundary, the implementation multiplies Equation~\eqref{eq:covariance} by the
 remaining Pearson scale.
 
-Equation~\eqref{eq:covariance} is a plug-in, model-based covariance: it
-conditions on the estimated $\widehat{\rho}$ as though it were fixed.  It does
-not propagate uncertainty from estimating a separate dispersion for every
-guide.  Referring the coefficient to $t_{m-q}$ gives a heavier-tailed
-small-sample reference than a normal approximation, but it is not a formal
-correction for dispersion-estimation uncertainty.  With few independent
-libraries, calibration must therefore be checked by simulation, phenotype
-permutation, or prespecified negative controls.
+The plug-in covariance in Equation~\eqref{eq:covariance} treats the estimated
+$\widehat{\rho}$ as fixed and omits uncertainty from estimating a separate
+dispersion for every guide.  Referring the coefficient to $t_{m-q}$ gives a
+heavier-tailed small-sample reference than a normal approximation, but it is
+not a formal correction for dispersion-estimation uncertainty.  With few
+independent libraries, calibration must therefore be checked by simulation,
+phenotype permutation, or prespecified negative controls.
 
 For coefficient $\beta_j$, the statistic
 \begin{equation}
@@ -32,9 +30,8 @@ For coefficient $\beta_j$, the statistic
   (\widehat{\boldsymbol{\beta}})_{jj}}}
   \label{eq:tstat}
 \end{equation}
-is compared with a Student $t_{m-q}$ distribution.  The degrees of freedom are
-driven by the number of independent sequenced samples, not by the total read
-count.  Together with the bounded weights, this prevents sequencing depth
+is compared with a Student $t_{m-q}$ distribution.  The number of independent sequenced samples determines the degrees of freedom;
+total read count does not enter that calculation.  Together with the bounded weights, this prevents sequencing depth
 from being treated as biological replication.
 
 More generally, for a prespecified contrast vector $\mathbf{c}$,
@@ -52,8 +49,8 @@ Benjamini--Hochberg procedure \citep{benjamini1995controlling}.
 
 \subsubsection{Optional guide-dispersion moderation}
 
-BARCS-MOD is an optional empirical-Bayes transformation of the fitted guide
-statistics, not a separate likelihood.  Let $\nu=m-q$ and let
+BARCS-MOD applies an optional empirical-Bayes transformation to the fitted
+guide statistics while retaining the same likelihood.  Let $\nu=m-q$ and let
 $s_g^2=Q_g^{(0)}/\nu$ be guide $g$'s Pearson variance inflation under the
 binomial working model.  A lowess trend in log mean CPM gives a guide-specific
 prior scale $s_{0g}^2$, and the scaled-$F$ log-moment estimator of
@@ -84,7 +81,7 @@ $s_{g,\mathrm{fit}}^2=\max(1,s_g^2)$.  The implementation therefore reports
 The \texttt{pmax} truncation in
 Equation~\eqref{eq:guide-moderated-t} retains the fitted inflation floor in
 the standard-error rescaling.  The optional \texttt{one\_way=TRUE}
-variant additionally replaces $\widetilde{s}_g^2$ by
+variant replaces $\widetilde{s}_g^2$ by
 $\max(\widetilde{s}_g^2,s_{g,\mathrm{fit}}^2)$, so moderation can only increase
 a standard error.  All reported BARCS-MOD results are simulation ablations;
 the real-data benchmarks use unmoderated BARCS.
@@ -119,22 +116,20 @@ The reported gene effect is the median of the guide coefficient estimates,
   \label{eq:geneeffect}
 \end{equation}
 and gene-level false-discovery rates are obtained by applying
-Benjamini--Hochberg to the collection of $p_g$ values.  Consequently,
-concordant guide directions reinforce one another, discordant directions
-cancel, and one extreme guide has limited influence on the reported effect.
+Benjamini--Hochberg to the collection of $p_g$ values.  Concordant guide directions reinforce one another in the combined score, and
+discordant directions cancel.  The median limits the influence of one extreme
+guide on the reported effect.
 
-This aggregation is deliberately transparent, but it is not a native
-hierarchical gene model.
+This summary does not fit a hierarchical gene model.
 Equations~\eqref{eq:signedz}--\eqref{eq:genestouffer} give equal weight to
 valid guides and use the independence reference $\sqrt{m_g}$; shared sequence
 artifacts or other correlation can therefore make the gene statistic
-anti-conservative.  A production extension should estimate guide reliability
-and within-gene dependence or use a hierarchical effect model.  In the Cas13
-comparison, the four guide-level regression methods use signed Stouffer
-aggregation as specified below.  In the other biological head-to-head
-benchmarks, the Stouffer--median procedure is used for BARCS (and for the
-deliberately naive binomial comparator).  MAGeCK, Chronos, BAGEL2, Waterbear,
-and MAUDE retain their native or deposited gene-level summaries.  The
-exploratory DeWeirdt false-discovery audit used Fisher aggregation as stated
-in its Results description and is not pooled with these primary benchmark
-statistics.
+anti-conservative.  An extension for gene-level inference should estimate
+guide reliability and within-gene dependence or use a hierarchical effect
+model.  In the Cas13 comparison, the four guide-level regression methods use
+signed Stouffer aggregation as specified below.  In the other biological
+head-to-head benchmarks, the Stouffer--median procedure is used for BARCS (and
+for the naive binomial comparator).  MAGeCK, Chronos, BAGEL2, Waterbear, and
+MAUDE retain their native or deposited gene-level summaries.  The exploratory
+DeWeirdt false-discovery audit used Fisher aggregation as stated in its
+Results description and is not pooled with these primary benchmark statistics.

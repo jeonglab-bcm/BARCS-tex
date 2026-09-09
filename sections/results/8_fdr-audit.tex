@@ -5,16 +5,14 @@ calibration}
 
 The recent false-discovery manuscript by \citet{dempster2025fdr} raised the
 concern that CB\textsuperscript{2}, and beta-binomial CRISPR analysis more
-broadly, could be anti-conservative.  Because one of the present authors
-(H.-H.J.)\ also developed CB\textsuperscript{2}, this reanalysis is disclosed
-as an audit of that author's prior method rather than an independent
-adjudication.  We revisited its deposited benchmark
-\citep{dempster2025fdrdata} to distinguish a property of the sampling model
-from a consequence of the analysis contract.  The benchmark compared
+broadly, could be anti-conservative.  H.-H.J.\ also developed
+CB\textsuperscript{2}, so this reanalysis audits an author's prior method and
+is not an independent assessment.  We revisited its deposited benchmark
+\citep{dempster2025fdrdata} to distinguish the effects of the sampling model
+from those of input preparation.  The benchmark compared
 CB\textsuperscript{2}, MAGeCK \citep{li2014mageck}, JACKS
-\citep{allen2019jacks}, DrugZ \citep{colic2019drugz}, and Chronos.  We
-separated two analyses that answer different questions.  For Avana, we
-re-evaluated the published CB\textsuperscript{2} analysis
+\citep{allen2019jacks}, DrugZ \citep{colic2019drugz}, and Chronos.  For Avana,
+we re-evaluated the published CB\textsuperscript{2} analysis
 \citep{jeong2019beta} after restoring the full-library denominator; BARCS was
 not fitted because this audit isolates the denominator used by
 CB\textsuperscript{2}.  For PSN1 and DeWeirdt, we retained the deposited
@@ -23,9 +21,9 @@ tables.  The DeWeirdt analysis used Fisher aggregation of guide probabilities
 to form gene summaries.  In the reported Avana analysis, restriction to null
 genes before fitting changed the column totals.  Reusing the full-library
 CB\textsuperscript{2} probabilities for the same genes reduced the number of
-FDR 0.10 discoveries from 152 to zero.  This shows that the specific 152-call
-result depended on the denominator used for fitting; it does not refute the
-broader claim that beta-binomial analyses can be anti-conservative.
+FDR 0.10 discoveries from 152 to zero.  The 152-call result therefore depended
+on the fitted denominator.  The broader concern about anti-conservative
+beta-binomial analyses remains.
 
 \begin{table}[htbp]
 \centering
@@ -83,13 +81,12 @@ comparison without recovering BRCA1 or BRCA2.  With only two replicates per
 arm, treatment-associated quality shifts remain a possible explanation for
 this concentration of calls.
 
-This reanalysis therefore narrows, but does not refute, the concern raised by
-\citet{dempster2025fdr}.  It shows that pre-fit guide subsetting and common
-normalization can alter the effective depth seen by a
-library-total-conditional model, so the reported 152-call example should not
-be attributed to the sampling model alone.  At the same time, zero Avana
-discoveries after restoring the full total do not demonstrate nominal
-calibration: the largest cell-line-specific $p<0.05$ rate remained 0.145, and
-the DeWeirdt analysis remained unstable.  Comparator studies must preserve
-full-library totals, separate calibration guides from evaluation guides, and
-use blocked permutations or independent validation for differential screens.
+The concern raised by \citet{dempster2025fdr} remains, although the 152-call
+example also depends on input preparation.  Pre-fit guide subsetting and
+common normalization can alter the effective depth in a
+library-total-conditional model.  Zero Avana discoveries after restoring the
+full total do not demonstrate nominal calibration: the largest
+cell-line-specific $p<0.05$ rate remained 0.145, and the DeWeirdt analysis
+remained unstable.  Comparator studies must preserve full-library totals,
+separate calibration guides from evaluation guides, and use blocked
+permutations or independent validation for differential screens.

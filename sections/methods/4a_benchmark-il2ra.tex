@@ -3,29 +3,28 @@
 
 The GSE242880 count matrix contains four ordered FACS bins for each of three
 donors, 6,000 guides, and 593 non-targeting guides
-\citep{freimer2022il2ra,pimentel2024waterbear}.  Bin locations were set to the
+\citep{freimer2022il2ra,pimentel2024waterbear}.  We set bin locations to the
 expected values of four equal-probability intervals under a standard normal
 distribution.  BARCS fitted this ordered score with donor indicators.
-MAGeCK-MLE received the same four-bin design matrix.  All reported IL2RA method
-comparisons used all four ordered fractions.
+MAGeCK-MLE received the same four-bin design matrix.  All reported IL2RA
+method comparisons used all four ordered fractions.
 
-BARCS guide results were aggregated with the prespecified directional Stouffer
-summary.  For held-out calibration, non-targeting guides were ordered by guide
-identifier and assigned cyclically to five folds.  Each fold was evaluated
-with the tail scale estimated from the other four folds.  The production gene
-analysis used all controls, whereas the reported non-targeting $p<0.05$ rate
-uses only held-out guide predictions.  To check sensitivity to fold assignment, the same
-cross-fitting calculation was repeated after a seeded permutation of guide
-identifiers; this changes only fold membership, not the fitted guide
+We aggregated BARCS guide results with the prespecified directional Stouffer
+summary.  For held-out calibration, we ordered non-targeting guides by
+identifier and assigned them cyclically to five folds.  Each fold was
+evaluated with the tail scale estimated from the other four folds.  The
+production gene analysis used all controls, whereas the reported non-targeting
+$p<0.05$ rate uses only held-out guide predictions.  We checked sensitivity to
+fold assignment by repeating cross-fitting after a seeded permutation of guide
+identifiers.  This changes fold membership while retaining the fitted guide
 coefficients.
 
 Directional recovery was evaluated against 26 regulators validated by
 individual knockout and flow cytometry.  A recovered regulator had to pass the
 method's reported threshold and agree with the validated direction.  The
 panel-hit fraction was calculated as recovered validated regulators divided by
-all discoveries.  Because validation was limited to this panel, that fraction
-is a descriptive measure of call-set concentration, not an estimate of
-positive predictive value; discoveries outside the panel were not counted as
-validated but were not assumed to be false.
-Published Waterbear and MAUDE totals were used only for this recovery
-comparison; no unavailable non-targeting rate was imputed.
+all discoveries.  Because validation was limited to this panel, the fraction
+describes call-set concentration and cannot estimate positive predictive
+value.  Discoveries outside the panel remained unvalidated, with unknown true
+or false status. Published Waterbear and MAUDE totals were used only for this
+recovery comparison; no unavailable non-targeting rate was imputed.

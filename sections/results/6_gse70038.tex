@@ -3,17 +3,17 @@
 \label{sec:gse70038}
 
 GSE70038 contains 64,747 guides in 16 libraries from two glioblastoma
-stem-cell lines and two neural stem-cell lines \citep{toledo2015pkmyt1}.
-BARCS and MAGeCK-MLE received the same five-column design: one shared initial
+stem-cell lines and two neural stem-cell lines \citep{toledo2015pkmyt1}. BARCS
+and MAGeCK-MLE received the same five-column design: one shared initial
 condition and four cell-line-specific terminal coefficients.  This analysis
 evaluates the joint estimation of all four effects and uses external
 annotations to examine disagreements with MAGeCK-MLE.
 
-To examine the disagreements directly, we selected the 200 most depleted genes
-from each method for each terminal coefficient.  This equal-size rule avoids
-comparing differently calibrated FDR cutoffs.  The lists shared 139--144 genes,
-leaving 56--61 BARCS-only and the same number of MAGeCK-only genes per cell
-line (Supplementary Table~\ref{tab:gse-enrichment}).
+To examine disagreements, we selected the 200 most depleted genes from each
+method for each terminal coefficient.  This equal-size rule avoids comparing
+differently calibrated FDR cutoffs.  The lists shared 139--144 genes, leaving
+56--61 BARCS-only and the same number of MAGeCK-only genes per cell line
+(Supplementary Table~\ref{tab:gse-enrichment}).
 
 \begin{table}[htbp]
 \centering
@@ -45,16 +45,15 @@ RNA metabolism ($2.80\times10^{-13}$)\\
 \end{table}
 
 Enrichr analysis of the complementary sets used GO Biological Process 2023 and
-Reactome 2022 \citep{chen2013enrichr}.  Both methods' exclusive hits formed
-coherent essential-process groups.  BARCS-only GSC0131 hits emphasized cell
-cycle regulators, whereas the MAGeCK-only set emphasized rRNA processing; RNA
-metabolism dominated both methods in the other coefficients.  These
-enrichments describe the biological content of the method-specific lists.
-Their use for accuracy assessment is limited: Enrichr uses its library
-background rather than the genes testable in this screen, and
-essential-process enrichment is expected in a depletion experiment.  Against
-the independent Hart reference set, 62.3--75.9\% of the BARCS-exclusive genes
-and 59.0--86.2\% of the MAGeCK-exclusive genes were essential, with strong
-enrichment for both methods in every coefficient (one-sided Fisher
-$p<10^{-22}$).  Neither method was consistently higher.  The complete overlap
-and enrichment records are provided with the analysis output.
+Reactome 2022 \citep{chen2013enrichr}.  Both methods' exclusive hits were
+enriched for essential processes.  In GSC0131, BARCS-only hits were enriched
+for cell cycle regulators and MAGeCK-only hits for rRNA processing.  RNA
+metabolism dominated both methods in the other coefficients.  The enrichments
+have limited use for assessing accuracy: Enrichr uses its library background
+rather than the genes testable in this screen, and essential-process
+enrichment is expected in a depletion experiment.  Against the independent
+Hart reference set, 62.3--75.9\% of the BARCS-exclusive genes and 59.0--86.2\%
+of the MAGeCK-exclusive genes were essential, with strong enrichment for both
+methods in every coefficient (one-sided Fisher $p<10^{-22}$).  Neither method
+was consistently higher.  The complete overlap and enrichment records are
+provided with the analysis output.

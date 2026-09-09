@@ -1,54 +1,52 @@
 % !TeX root = ../main.tex
 Pooled CRISPR screens increasingly combine time courses, ordered FACS
-fractions, donor cohorts, dose series, and factorial treatment arms.  These
-experiments ask about slopes, adjusted associations, and interactions.
-Reducing them to repeated high-versus-low comparisons discards intermediate
-observations and prevents estimation of one effect conditional on the other
-design variables.
+fractions, donor cohorts, dose series, and factorial treatment arms.
+Estimating slopes, adjusted associations, and interactions requires retaining
+the design information.  Repeated high-versus-low comparisons discard
+intermediate observations and prevent estimation of one effect conditional on
+the other design variables.
 
-The count denominator determines how guide abundance is modeled.
-Negative-binomial methods generally model marginal counts and account for
-library size through normalization or an offset
-\citep{marioni2008rnaseq,anders2010deseq,love2014deseq2,lun2016edger}.
-In a pooled screen, each guide count is observed together with the total number
-of mapped guide reads in its library.  Conditioning on that total treats guide
+Negative-binomial methods generally model marginal counts, using normalization
+or an offset to account for library size
+\citep{marioni2008rnaseq,anders2010deseq,love2014deseq2,lun2016edger}. In a
+pooled screen, each guide count is observed together with the total number of
+mapped guide reads in its library.  Conditioning on that total treats guide
 abundance as a proportion.  A beta-binomial model represents this sampling
 structure and separates depth-dependent sequencing variation from
-heterogeneity among biological libraries.  The original
-CB\textsuperscript{2} study reported better goodness of fit for beta-binomial
-than negative-binomial models in pooled CRISPR counts \citep{jeong2019beta}.
+heterogeneity among biological libraries.  The original CB\textsuperscript{2}
+study reported better goodness of fit for beta-binomial than negative-binomial
+models in pooled CRISPR counts \citep{jeong2019beta}.
 
 CB\textsuperscript{2} applies this principle to two independent groups.
 Beta-binomial regression is available in \texttt{corncob} and statistical
 packages including \texttt{aod}, \texttt{VGAM}, and \texttt{gamlss}
-\citep{martin2020corncob,lesnoff2012aod,yee1996vgam,rigby2005gamlss}, but these
-tools lack a CRISPR-oriented workflow connecting full-library totals,
+\citep{martin2020corncob,lesnoff2012aod,yee1996vgam,rigby2005gamlss}, but
+these tools lack a CRISPR-oriented workflow connecting full-library totals,
 guide-level regression, and screen-level outputs.  Established screen and
 RNA-sequencing methods, including MAGeCK-MLE \citep{li2014mageck}, edgeR-QL
 \citep{lun2016edger}, DESeq2 \citep{love2014deseq2}, and limma--voom
 \citep{law2014voom}, already support multivariable designs.  Chronos and
 Waterbear provide specialized models for population dynamics and joint
 FACS-bin membership, respectively
-\citep{dempster2021chronos,pimentel2024waterbear}.  These methods provide
-comparators for assessing the practical value of extending the beta-binomial
-screen model.
+\citep{dempster2021chronos,pimentel2024waterbear}.  We use these methods to
+assess the beta-binomial extension.
 
 We developed BARCS (Beta-binomial Analysis and Regression for CRISPR Screens)
-to carry the library-total-conditional model into multivariable analysis.
-BARCS replaces two group means with a regression design matrix, allowing a
-single fit to estimate time, donor-adjusted abundance, treatment, or interaction
+for multivariable analysis under the library-total-conditional model.  It
+replaces two group means with a regression design matrix so that a single fit
+can estimate time, donor-adjusted abundance, treatment, or interaction
 effects.  Independent biological libraries determine the residual degrees of
-freedom.  Guide-level estimation is followed by optional dispersion moderation,
-gene aggregation, and control-based calibration.  The default denominator
-retains full-library totals through guide filtering; a separate control-based
-normalization option estimates effects relative to a chosen control class.
+freedom.  Guide-level estimation is followed by optional dispersion
+moderation, gene aggregation, and control-based calibration.  The default
+denominator retains full-library totals through guide filtering; a separate
+control-based normalization option estimates effects relative to a chosen
+control class.
 
 We first describe the BARCS workflow and evaluate its longitudinal and
 covariate-adjusted coefficients in Cas13 and IL2RA screens.  Genome-scale and
 factorial simulations then test dispersion moderation and denominator choice
 against known truth.  A null-calibration grid examines the consequences of
 combining correlated guides, and an external audit assesses the effect of
-pre-fit subsetting on a published false-discovery result.  These analyses
-establish the uses and limitations of multivariable beta-binomial regression,
-including the distinction between recovering biological signals and obtaining
-calibrated guide- or gene-level probabilities.
+pre-fit subsetting on a published false-discovery result.  Throughout, we
+assess biological signal recovery separately from calibration of guide- and
+gene-level probabilities.

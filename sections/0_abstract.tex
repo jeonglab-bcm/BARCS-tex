@@ -2,26 +2,24 @@
 \begin{abstract}
 Pooled CRISPR screens increasingly use longitudinal, donor-adjusted, and
 factorial designs, whereas beta-binomial screen methods have largely focused
-on pairwise comparisons.  BARCS extends the library-total-conditional
-beta-binomial model to guide-level regression with an arbitrary design matrix,
-enabling estimation of time, covariate, and interaction effects.  In four
+on pairwise comparisons. BARCS extends the library-total-conditional
+beta-binomial model to guide-level regression with an arbitrary design matrix
+to estimate time, covariate, and interaction effects. In four
 replicate-complete Cas13 screens, adding the intermediate time point modestly
-improved essential-gene recovery.  Applying the same non-targeting-control
+improved essential-gene recovery. Applying the same non-targeting-control
 scaling rule to BARCS, MAGeCK-MLE, edgeR-QL, DESeq2, and limma--voom produced
 similar calibration diagnostics, although the alternatives ranked essential
-genes more strongly.  In an ordered-bin IL2RA screen, donor-adjusted BARCS
+genes more strongly. In an ordered-bin IL2RA screen, donor-adjusted BARCS
 recovered 22 validated regulators with 49 calls, compared with 17 regulators
-and 72 calls for the matched MAGeCK-MLE fit.  Cross-fitted control scaling
-reduced the guide-level null $p<0.05$ rate from 0.133 to 0.049.  Simulations
+and 72 calls for the matched MAGeCK-MLE fit. Cross-fitted control scaling
+reduced the guide-level null $p<0.05$ rate from 0.133 to 0.049. Simulations
 showed gains from dispersion moderation and control-based denominators, with
-substantial variation in the denominator effect across seeds.  A null grid
-isolated gene aggregation under within-gene guide dependence as a source of
-error; aggregation-matched control scaling reduced but did not eliminate the
-inflation.  An external audit also identified a denominator-dependent
-CB\textsuperscript{2} false-discovery result, while leaving broader calibration
-concerns unresolved.  BARCS enables multivariable analysis within the
-beta-binomial CRISPR model.  Its inferential use depends on independent
-biological libraries, likelihood-compatible counts, and calibration evaluated
-at the level of the reported statistic; correlated guides and partitioned bins
-require further modeling.
+substantial variation in the denominator effect across seeds. In a null grid,
+combining dependent guides inflated gene-level error. Aggregation-matched
+control scaling reduced but did not eliminate the inflation. An external audit
+identified a denominator-dependent CB\textsuperscript{2} false-discovery
+result; broader calibration concerns remained unresolved. Inference with this
+multivariable beta-binomial model depends on independent biological libraries,
+likelihood-compatible counts, and calibration at the level of the reported
+statistic. Correlated guides and partitioned bins require further modeling.
 \end{abstract}

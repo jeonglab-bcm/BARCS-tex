@@ -1,16 +1,16 @@
 % !TeX root = ../main.tex
 \subsection{Model and inference}
 
-For the model in Equation~\eqref{eq:barcs-model}, coefficients are estimated by
-feasible iteratively reweighted least squares.  At each fitted mean, the
-guide-specific overdispersion $\rho_g$ solves a Pearson equation and is
-truncated at zero when the counts are not overdispersed.  Coefficient and
-dispersion updates alternate to convergence.  A prespecified coefficient or
-contrast is divided by its model-based standard error and compared with a
-Student $t$ distribution using residual sample degrees of freedom.  This
-plug-in calculation does not fully propagate dispersion-estimation
-uncertainty.  Tests are two-sided, and guide- or gene-level probabilities are
-adjusted by Benjamini--Hochberg.
+We estimate the coefficients in Equation~\eqref{eq:barcs-model} by feasible
+iteratively reweighted least squares.  At each fitted mean, the guide-specific
+overdispersion $\rho_g$ solves a Pearson equation and is truncated at zero
+when the counts are not overdispersed.  Coefficient and dispersion updates
+alternate to convergence.  We divide a prespecified coefficient or contrast by
+its model-based standard error and compare the result with a Student $t$
+distribution using residual sample degrees of freedom.  This plug-in
+calculation does not fully propagate dispersion-estimation uncertainty.  Tests
+are two-sided, and guide- or gene-level probabilities are adjusted by
+Benjamini--Hochberg.
 
 BARCS-ST uses unmoderated guide statistics.  BARCS-MOD applies an
 empirical-Bayes variance adjustment based on a trend in log mean abundance,
@@ -21,41 +21,41 @@ estimating equations and moderation procedure.
 
 \subsection{Gene-level aggregation and control calibration}
 
-The primary gene summaries use directional Stouffer aggregation.  Each guide's
-two-sided probability is converted to a normal deviate carrying the sign of
-its coefficient.  The sum of these deviates is divided by the square root of
-the number of valid guides and converted to a two-sided gene probability.
-The gene effect is the median guide coefficient.  The exploratory DeWeirdt
-audit uses Fisher aggregation, as specified in Supplementary
-Section~\ref{sec:supp-fdr-audit}.
+For directional Stouffer aggregation, we convert each guide's two-sided
+probability to a normal deviate with the sign of its coefficient.  We sum the
+deviates, divide by the square root of the number of valid guides, and convert
+the result to a two-sided gene probability. The gene effect is the median
+guide coefficient.  The exploratory DeWeirdt audit uses Fisher aggregation, as
+specified in Supplementary Section~\ref{sec:supp-fdr-audit}.
 
 Control scaling divides a signed-normal statistic by the ratio of its control
-95th absolute percentile to the two-sided standard-normal 0.05 cutoff.
-Ratios below one are set to one, so scaling cannot increase significance at
-that reporting level.  Coefficient estimates remain unchanged.  This rule
-adjusts an empirical tail; it does not guarantee calibration throughout the
-null distribution.
+95th absolute percentile to the two-sided standard-normal 0.05 cutoff. Ratios
+below one are set to one, so scaling cannot increase significance at that
+reporting level.  Coefficient estimates remain unchanged.  This rule adjusts
+an empirical tail; it does not guarantee calibration throughout the null
+distribution.
 
 The calibration unit and evaluation split differ by benchmark.  Cas13 uses
 non-targeting pseudo-genes matched to the target-gene guide-count distribution
 and applies the same rule after each method's gene summary.  Its reported
 proxy-null diagnostic uses unexpressed targeted lncRNAs.  IL2RA uses
-\texttt{bb\_calibrate\_controls()} at guide level, with deterministic five-fold
-cross-fitting for the reported control rate and all controls for the production
-fit.  CRISPulator scales guide statistics before Stouffer aggregation.
-simCRISPR splits each control class into normalization/calibration and evaluation
-halves.  The all-null grid learns a post-aggregation scale from one half of
-the null genes and evaluates the other half.  These distinctions prevent a
-guide-level control rate from being interpreted as evidence of gene-level
-calibration.
+\texttt{bb\_calibrate\_controls()} at guide level, with deterministic
+five-fold cross-fitting for the reported control rate and all controls for the
+production fit.  CRISPulator scales guide statistics before Stouffer
+aggregation. simCRISPR splits each control class into
+normalization/calibration and evaluation halves.  The all-null grid learns a
+post-aggregation scale from one half of the null genes and evaluates the other
+half.  A guide-level control rate therefore applies to guide tests and cannot
+establish gene-level calibration.
 
 The Stouffer denominator assumes independent null guide scores.  Shared
 artifacts or library effects can violate that assumption and inflate gene
-significance, as shown in Table~\ref{tab:calibration-grid}.  Matching the number
-of control guides per pseudo-gene also need not reproduce the dependence among
-guides targeting a gene.  The reported gene probabilities and nominal FDR
-thresholds therefore require empirical validation.  Permutations used for that
-purpose must preserve experimental blocking and within-gene guide structure.
+significance, as shown in Table~\ref{tab:calibration-grid}.  Matching the
+number of control guides per pseudo-gene also need not reproduce the
+dependence among guides targeting a gene.  The reported gene probabilities and
+nominal FDR thresholds therefore require empirical validation.  Permutations
+used for that purpose must preserve experimental blocking and within-gene
+guide structure.
 
 \subsection{Denominator choice and effect interpretation}
 
@@ -63,22 +63,21 @@ The default denominator is the full mapped-guide total, recorded before guide
 filtering and retained throughout fitting.  A coefficient describes a change
 in the log odds of library share; for small guide proportions, it approximates
 a log abundance ratio per unit of the predictor.  Widespread depletion can
-increase the library share of unchanged guides
-(Figure~\ref{fig:simcrispr}), so relative abundance alone does not establish an
-absolute change.
+increase the library share of unchanged guides (Figure~\ref{fig:simcrispr}),
+so relative abundance alone does not establish an absolute change.
 
-Control-based denominators deliberately replace that reference with a
-prespecified control class.  The simCRISPR analysis rescales control totals to
-the mean library size and rounds them, as detailed in the Supplement.  These
-are normalization-derived effective totals, so the literal full-library
-sampling interpretation requires separate assessment.  Effects are relative
-to the chosen controls; an absolute-abundance interpretation additionally
-depends on their invariance.  A control class's library share alone cannot
+Control-based denominators use a prespecified control class as the reference.
+The simCRISPR analysis rescales control totals to the mean library size and
+rounds them, as detailed in the Supplement.  The resulting effective totals
+come from normalization; their compatibility with the full-library sampling
+model requires separate assessment.  Effects are relative to the chosen
+controls.  Interpreting them as changes in absolute abundance also requires
+those controls to be invariant.  A control class's library share alone cannot
 establish that invariance because the rest of the library may also change.
-Non-targeting controls provide a reference without cutting, whereas safe-harbor
-controls include the shared cutting response.  This explicit normalization
-choice differs from unintentionally changing the denominator by subsetting
-before fitting.
+Non-targeting controls provide a reference without cutting, whereas
+safe-harbor controls include the shared cutting response.  This explicit
+normalization choice differs from unintentionally changing the denominator by
+subsetting before fitting.
 
 \subsection{Longitudinal Cas13 analysis}
 
@@ -91,9 +90,9 @@ target-gene guide-count distribution, and the same post-aggregation control
 scaling rule was applied to all five methods.  A BARCS endpoint fit using only
 days 0 and 14 tested the value of the intermediate time point.  Known
 essential genes were positives; targeted lncRNAs with TPM equal to zero in
-both available expression assays were proxy nulls.  That definition is
-imperfect in a direction that favours conservative methods, so the proxy-null
-rates are diagnostics rather than validated type-I errors.  Because the
+both available expression assays were proxy nulls.  This imperfect null
+definition can favor conservative methods, so the proxy-null rates serve as
+diagnostics and cannot be treated as validated type-I errors.  Because the
 deposited values were already normalized and ComBat-corrected, this analysis
 was treated as a processed-count sensitivity study.
 
@@ -101,13 +100,13 @@ was treated as a processed-count sensitivity study.
 
 The IL2RA screen comprised four ordered FACS bins from each of three donors.
 BARCS fitted one ordered-bin score with donor indicators, and MAGeCK-MLE
-received the same design.  Of 593 non-targeting guides, four folds estimated
-the control scale and the omitted fold evaluated it; this was repeated across
-five deterministic folds.  A seeded permutation of fold assignments checked
-that identifier ordering did not determine the result.  Method discoveries
-were compared with 26 regulators
-validated by individual knockout and flow cytometry.  Waterbear and MAUDE
-results were taken from their published analyses of the same experiment.
+received the same design.  We assigned the 593 non-targeting guides to five
+deterministic folds.  For each fold, the other four estimated the control
+scale and the held-out fold evaluated it.  A seeded permutation of fold
+assignments checked that identifier ordering did not determine the result.  We
+compared discoveries with 26 regulators validated by individual knockout and
+flow cytometry, using published Waterbear and MAUDE results for the same
+experiment.
 
 \subsection{Simulation benchmarks}
 
@@ -115,13 +114,12 @@ CRISPulator generated three 10,000-gene FACS screens with five guides per gene
 and four independent replicates.  BARCS-ST and BARCS-MOD differed only by
 guide-dispersion moderation.  simCRISPR generated three factorial
 knockout-by-treatment screens with 2,000 sgRNAs and three replicates per arm.
-Its known interaction effects allowed direct comparison of full-library,
-non-targeting, and safe-harbor denominators.  Control guides used for
-normalization and calibration were held out from scoring in simCRISPR.
-The all-null beta-binomial grid varied library number, abundance, dispersion,
-and guides per gene, with a focused correlated-guide arm.  Calibration
-specifications are given in Supplementary
-Section~\ref{sec:supp-calibration}.
+The known interaction effects let us compare full-library, non-targeting, and
+safe-harbor denominators.  Control guides used for normalization and
+calibration were held out from scoring in simCRISPR. The all-null
+beta-binomial grid varied library number, abundance, dispersion, and guides
+per gene, with a focused correlated-guide arm.  Calibration specifications are
+given in Supplementary Section~\ref{sec:supp-calibration}.
 
 \subsection{External and supplementary analyses}
 
@@ -130,5 +128,5 @@ CB\textsuperscript{2} probabilities using full-library totals and ran BARCS on
 the deposited PSN1 and DeWeirdt normalized tables.  Supplementary analyses
 include the serial-harvest HT-29 screen, a four-coefficient GSE70038 screen
 with method-specific pathway enrichment, and the Sanson A375 endpoint and
-copy-number audit.  The Supplement provides detailed preprocessing, design, and scoring
-definitions, together with the complete external audit.
+copy-number audit.  The Supplement provides detailed preprocessing, design,
+and scoring definitions, together with the complete external audit.

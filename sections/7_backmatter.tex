@@ -1,27 +1,26 @@
 % !TeX root = ../main.tex
 
 \section*{Data availability}
-Every dataset analysed in this study is publicly available and no new primary
-data were generated.  The longitudinal Cas13 fitness screens are the deposited
-supplementary tables of \citet{liang2026lncrna}; the corresponding raw
-sequencing reads are in the NCBI Sequence Read Archive under BioProject
-accession PRJNA1344834, for which a restartable read-processing pipeline is
-included with the analysis code.  The ordered-bin IL2RA screen is in the NCBI
+All datasets analyzed here are publicly available.  We generated no new
+primary data.  The Cas13 fitness data are in the deposited supplementary tables of
+\citet{liang2026lncrna}.  The corresponding raw sequencing reads are in the
+NCBI Sequence Read Archive under BioProject accession PRJNA1344834.  The
+analysis code includes a restartable pipeline for processing those reads.  The ordered-bin IL2RA screen is in the NCBI
 Gene Expression Omnibus under accession GSE242880
 \citep{pimentel2024waterbear}, and the 26 individually validated regulators
 used as the recovery panel are those reported by \citet{freimer2022il2ra}.
 
-The supplementary benchmarks reuse three further public screens.  The
-longitudinal HT-29 time course is Data S2 of \citet{tzelepis2016dropout},
-obtained through the Europe PMC supplementary bundle for PMC5081405.  The
-Brunello A375 endpoint screen is the count table distributed with
-CB\textsuperscript{2} \citep{jeong2019beta}, originally reported by
-\citet{sanson2018optimized}, with the reference essential and nonessential
-gene sets of \citet{hart2017evaluation}.  The four-coefficient multivariable
-screen is in GEO under accession GSE70038 \citep{toledo2015pkmyt1}.
-Copy-number profiles for the two copy-number audits are from DepMap Public
-19Q3 for A375 \citep{depmap19q3} and DepMap Public 20Q2 for HT-29
-(ACH-000552) \citep{depmap20q2}.
+The supplementary benchmarks use three other public screens.  The longitudinal
+HT-29 time course is Data S2 of \citet{tzelepis2016dropout}, obtained through
+the Europe PMC supplementary bundle for PMC5081405.  The Brunello A375
+endpoint screen is the count table distributed with CB\textsuperscript{2}
+\citep{jeong2019beta}, originally reported by \citet{sanson2018optimized},
+with the reference essential and nonessential gene sets of
+\citet{hart2017evaluation}.  The four-coefficient multivariable screen is in
+GEO under accession GSE70038 \citep{toledo2015pkmyt1}. Copy-number profiles
+for the two copy-number audits are from DepMap Public 19Q3 for A375
+\citep{depmap19q3} and DepMap Public 20Q2 for HT-29 (ACH-000552)
+\citep{depmap20q2}.
 
 The external false-discovery audit uses the deposited benchmark inputs of
 \citet{dempster2025fdrdata}, available on Figshare at
@@ -29,7 +28,6 @@ The external false-discovery audit uses the deposited benchmark inputs of
 published CB\textsuperscript{2} Avana analysis \citep{jeong2019beta}; the
 differential screens re-examined there are those of
 \citet{deweirdt2020isogenic}.
-
 
 \section*{Code availability}
 The BARCS implementation is available at \url{https://github.com/jeonglab-bcm/BARCS}.

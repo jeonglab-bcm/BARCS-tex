@@ -2,8 +2,7 @@
 \subsection{Guide dependence limits gene-level calibration}
 \label{sec:calibration}
 
-The preceding benchmarks use control diagnostics at different reporting
-levels.  To examine the effect of aggregation directly, we simulated all-null
+To test whether calibration changes after aggregation, we simulated all-null
 beta-binomial screens across sample sizes, mean guide counts, and dispersions,
 with three or five guides per gene.  A focused arm introduced within-gene
 guide correlation of 0.4.  Odd-numbered null genes estimated a control scale
@@ -16,18 +15,17 @@ was 0.074.  In the correlated-guide arm, guide-level rejection rates remained
 near or below 0.05, while gene-level rates reached 0.108--0.262
 (Table~\ref{tab:calibration-grid}).  Aggregation-matched held-out scaling
 reduced these rates to 0.056--0.112 but did not remove the inflation,
-particularly with five guides per gene.  These results locate a source of
-miscalibration in the independence assumption of the gene combiner.  A
-near-nominal guide-level diagnostic alone is insufficient to establish
-calibration of the reported gene probabilities.
+particularly with five guides per gene.  The gene combiner's independence
+assumption therefore contributes to miscalibration.  A near-nominal
+guide-level diagnostic alone cannot establish calibration of the gene
+probabilities.
 
 \begin{table}[htbp]
 \centering
 \caption{Null calibration before and after gene aggregation.  Entries are
 ranges of five-seed mean rejection rates across the applicable grid cells.
 The held-out column applies a scale learned from a disjoint half of the null
-genes after the same aggregation.  ``Mod. denotes guide-variance
-moderation.  Rejection uses $p<0.05$, with a target rate of 0.05.}
+genes after the same aggregation.  The Mod. column denotes guide-variance moderation.  Rejection uses $p<0.05$, with a target rate of 0.05.}
 \label{tab:calibration-grid}
 \small
 \setlength{\tabcolsep}{3.5pt}
@@ -58,11 +56,11 @@ fitted in that comparison.  The largest cell-line-specific null $p<0.05$ rate
 remained 0.145, so the corrected discovery count does not establish nominal
 calibration.
 
-BARCS analyses of the deposited normalized PSN1 and DeWeirdt tables provided
-mixed diagnostics.  PSN1 produced no gene calls and guide-level $p<0.05$ rates
-of 0.0481 before scaling and 0.0465 after scaling.  In DeWeirdt, BARCS recovered
-one of 28 curated interactions, and 37 of its 38 calls arose in one comparison.
-The complete audit is reported in Supplementary
-Section~\ref{sec:supp-fdr-audit}.  Together with the null grid, these results
-show why denominator preservation, guide dependence, and independent control
-evaluation must each be addressed when interpreting a discovery threshold.
+BARCS produced different diagnostics for the deposited normalized PSN1 and
+DeWeirdt tables.  PSN1 produced no gene calls and guide-level $p<0.05$ rates
+of 0.0481 before scaling and 0.0465 after scaling.  In DeWeirdt, BARCS
+recovered one of 28 curated interactions, and 37 of its 38 calls arose in one
+comparison. The complete audit is reported in Supplementary
+Section~\ref{sec:supp-fdr-audit}.  Interpreting a discovery threshold requires
+checking the denominator, guide dependence, and calibration on independent
+controls.

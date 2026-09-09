@@ -2,7 +2,7 @@
 \subsection{Donor-adjusted ordered-bin analysis recovers validated regulators}
 \label{sec:facs}
 
-We next evaluated donor adjustment in an ordered phenotype screen.  GSE242880
+For donor-adjusted analysis of an ordered phenotype, we used GSE242880, which
 contains an IL2RA protein-abundance screen in primary human T cells, with four
 ordered FACS bins for each of three donors, 6,000 guides, and 26 regulators
 validated by individual knockout and flow cytometry
@@ -11,33 +11,29 @@ prespecified latent normal locations, and BARCS fitted one marker-abundance
 slope with donor indicators.  Official MAGeCK-MLE received the same design.
 All comparisons below used all four ordered fractions.
 
-This experiment also provides a direct model diagnostic.  Bins from one donor
-partition the same cell pool and are negatively dependent, whereas the
-guide-level BARCS fit treats their margins independently.  Among 593
-non-targeting guides, the uncalibrated $p<0.05$ frequency was 0.133.  Because
-\texttt{bb\_calibrate\_controls()} estimates its scale from the control tail,
-evaluating those same guides after fitting would be circular.  We therefore
-used deterministic five-fold cross-fitting: each guide was evaluated with a
-scale estimated from the other four folds.  The held-out $p<0.05$ rate was
-29/593 (0.049).  Fold-specific scales ranged from 1.332 to 1.418.  A
-prespecified seeded permutation of the guide-to-fold assignment gave 31/593
-(0.052), with scales from 1.332 to 1.417, arguing against structure induced by
-guide-identifier ordering.  The production gene analysis used all controls to
-estimate one scale; calibration does not change effect estimates or their
-ranking.
+Bins from one donor partition the same cell pool and are negatively dependent,
+whereas the guide-level BARCS fit treats their margins independently.  Among
+593 non-targeting guides, the uncalibrated $p<0.05$ frequency was 0.133.
+Because \texttt{bb\_calibrate\_controls()} estimates its scale from the
+control tail, evaluating those same guides after fitting would be circular. We
+used deterministic five-fold cross-fitting, evaluating each guide with a scale
+estimated from the other four folds.  The held-out $p<0.05$ rate was 29/593
+(0.049).  Fold-specific scales ranged from 1.332 to 1.418.  A prespecified
+seeded permutation of the guide-to-fold assignment gave 31/593 (0.052), with
+scales from 1.332 to 1.417, suggesting little sensitivity to guide-identifier
+ordering.  The production gene analysis used all controls to estimate one
+scale; calibration does not change effect estimates or their ranking.
 
 \begin{table}[htbp]
 \centering
 \caption{Ordered-bin IL2RA sensitivity analysis.  Recovery requires a
 discovery at each method's threshold and the experimentally validated
-direction; all rows use all four FACS bins.  The BARCS NTC rate is five-fold
-held out; it is not measured on the
-controls used to estimate that fold's scale.  ``Validated'' is the number of
+direction; all rows use all four FACS bins.  The BARCS NTC rate uses five-fold held-out predictions, with each fold's scale
+estimated from the other folds.  ``Validated'' is the number of
 the 26 experimentally validated regulators recovered in the validated
-direction.  ``Panel hits/call'' divides that number by all method calls.  It
-describes how concentrated a call set is around this limited validation panel;
-it is not statistical precision or the probability that an individual call is
-true, because genes outside the panel were not individually validated.  An em
+direction.  ``Panel hits/call'' divides that number by all method calls.  This fraction describes call-set concentration within the limited validation
+panel.  Because genes outside the panel were not individually validated, it
+cannot estimate statistical precision or the probability that a call is true.  An em
 dash indicates that a comparable guide-level NTC rate was not available.}
 \label{tab:waterbear}
 \small
@@ -70,9 +66,8 @@ the 23 validated regulators recovered by the raw analysis.  The held-out NTC
 rate simultaneously moved from 0.133 to 0.049, supporting the calibrated
 four-bin result as the primary BARCS operating point.
 
-The specialist models remain important comparators.  Waterbear recovered 24
-validated regulators and MAUDE recovered 25, but with 79 and 406 discoveries.
-BARCS had the highest validation-panel fraction among the call sets shown.
-Waterbear explicitly models the dependence among sorted bins.  Negative
-controls diagnose the independence violation and calibrate one operating
-point; they do not make the bin margins independent.
+Waterbear recovered 24 validated regulators and MAUDE recovered 25, but with
+79 and 406 discoveries. BARCS had the highest validation-panel fraction among
+the call sets shown. Waterbear explicitly models the dependence among sorted
+bins.  Negative controls diagnose the independence violation and calibrate the
+operating point, but dependence among the bin margins remains.

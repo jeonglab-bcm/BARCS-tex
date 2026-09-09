@@ -14,19 +14,19 @@ K_{gi}\mid N_i\sim
 where $N_i$ is the full mapped-guide total before filtering, $\mu_{gi}$ is the
 expected guide proportion, and $\rho_g$ represents overdispersion.
 The design vector $\mathbf{x}_i$ can contain continuous predictors, group or
-donor indicators, and interactions.  A prespecified coefficient or contrast
-therefore addresses a question within one joint fit.  BARCS retains the
+donor indicators, and interactions.  A prespecified coefficient or contrast tests the effect of interest within the
+joint fit.  BARCS retains the
 sampling principle of CB\textsuperscript{2} \citep{jeong2019beta}, with its own
 estimation and finite-sample testing procedure.
 
-The workflow fits guide coefficients and dispersion, computes a $t$ statistic
-using residual sample degrees of freedom, and summarizes guide evidence when
-the reported unit is a gene.  Gene summaries use a directional Stouffer
+BARCS fits guide coefficients and dispersion and computes a $t$ statistic
+using residual sample degrees of freedom.  For gene-level results, it then
+summarizes the guide evidence.  Gene summaries use a directional Stouffer
 statistic and the median guide coefficient.  In the simulation ablations,
-BARCS-ST uses unmoderated guide statistics and BARCS-MOD applies empirical-Bayes
-variance moderation before the same summary.  Real-data analyses use
-unmoderated BARCS.  Control scaling adjusts significance without changing
-coefficient estimates; its placement is specified for each benchmark.
+BARCS-ST uses unmoderated guide statistics and BARCS-MOD applies
+empirical-Bayes variance moderation before the same summary.  Real-data
+analyses use unmoderated BARCS.  Control scaling adjusts significance without
+changing coefficient estimates; its placement is specified for each benchmark.
 The Cas13 comparison calibrates gene summaries using aggregation-matched
 control pseudo-genes, whereas the IL2RA diagnostic cross-fits a guide-level
 scale.  The null simulations below test whether guide-level calibration
@@ -36,6 +36,4 @@ Full-library totals estimate changes in library share.  Control-based
 normalization instead expresses abundance relative to a prespecified control
 class, as examined in the interaction simulation.  This deliberate change of
 reference is distinct from inadvertently recomputing totals after guide
-filtering.  The following analyses evaluate the additional design information,
-the effects of these optional steps, and the assumptions needed to interpret
-the resulting probabilities.
+filtering.
