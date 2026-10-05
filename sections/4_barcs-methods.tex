@@ -3,29 +3,42 @@
 
 We estimate the coefficients in Equation~\eqref{eq:barcs-model} by feasible
 iteratively reweighted least squares.  At each fitted mean, the guide-specific
-overdispersion $\rho_g$ solves a Pearson equation and is truncated at zero
-when the counts are not overdispersed.  Coefficient and dispersion updates
-alternate to convergence.  We divide a prespecified coefficient or contrast by
-its model-based standard error and compare the result with a Student $t$
-distribution using residual sample degrees of freedom.  This plug-in
-calculation does not fully propagate dispersion-estimation uncertainty.  Tests
-are two-sided, and guide- or gene-level probabilities are adjusted by
-Benjamini--Hochberg.
+overdispersion $\rho_g$ solves a Pearson estimating equation and is truncated
+at zero when the counts are not overdispersed, and the coefficient and
+dispersion updates alternate until convergence.  We divide a prespecified
+coefficient or contrast by its model-based standard error and compare the
+result with a Student $t$ distribution whose degrees of freedom are the number
+of independent libraries minus the rank of the design.  Tests are two-sided,
+and guide- or gene-level probabilities are adjusted by the Benjamini--Hochberg
+procedure.
 
-BARCS-ST uses unmoderated guide statistics.  BARCS-MOD applies an
-empirical-Bayes variance adjustment based on a trend in log mean abundance,
-changing standard errors and reference degrees of freedom while retaining the
-coefficient estimates.  Real-data benchmarks use unmoderated BARCS.
-Supplementary Sections~\ref{sec:estimation} and \ref{sec:inference} give the
-estimating equations and moderation procedure.
+By default, BARCS then moderates the guide dispersions.  Each guide's Pearson
+variance inflation is shrunk toward a lowess trend in log mean abundance, with
+the prior degrees of freedom estimated from the whole library by the
+scaled-$F$ moment method of \citet{smyth2004linear}.  This changes the
+standard errors and adds the prior degrees of freedom to the reference
+distribution while leaving the coefficient estimates unchanged.  Moderation
+runs whenever at least 50 guides are usable and can be turned off with
+\texttt{bb\_screen(moderate = FALSE)}.  All real-data results in the main text
+use moderated BARCS (version 0.2.0); in the simulation ablations, BARCS-ST and
+BARCS-MOD denote the unmoderated and moderated fits.  Supplementary
+Sections~\ref{sec:estimation} and \ref{sec:inference} give the estimating
+equations and the moderation procedure.
 
 \subsection{Gene-level aggregation and control calibration}
 
 For directional Stouffer aggregation, we convert each guide's two-sided
-probability to a normal deviate with the sign of its coefficient.  We sum the
-deviates, divide by the square root of the number of valid guides, and convert
-the result to a two-sided gene probability. The gene effect is the median
-guide coefficient.  The exploratory DeWeirdt audit uses Fisher aggregation, as
+probability to a normal deviate carrying the sign of its coefficient and sum
+the deviates over the $m_g$ valid guides of the gene.  Under independence the
+null variance of this sum is $m_g$; if the null scores of a gene's guides have
+average correlation $r$, it is $m_g+m_g(m_g-1)r$.  We divide the sum by the
+square root of the latter and convert the result to a two-sided gene
+probability.  BARCS estimates $r$ during the guide fits as the average
+correlation of the guides' Pearson residual vectors within genes, with each
+gene weighted equally, minus the average correlation of guide pairs from
+different genes, truncated at zero.  Because residuals exclude every fitted
+design effect, a true gene effect does not inflate the estimate.  The gene
+effect is the median guide coefficient.  The exploratory DeWeirdt audit uses Fisher aggregation, as
 specified in Supplementary Section~\ref{sec:supp-fdr-audit}.
 
 Control scaling divides a signed-normal statistic by the ratio of its control
@@ -48,14 +61,12 @@ post-aggregation scale from one half of the null genes and evaluates the other
 half.  A guide-level control rate therefore applies to guide tests and cannot
 establish gene-level calibration.
 
-The Stouffer denominator assumes independent null guide scores.  Shared
-artifacts or library effects can violate that assumption and inflate gene
-significance, as shown in Table~\ref{tab:calibration-grid}.  Matching the
-number of control guides per pseudo-gene also need not reproduce the
-dependence among guides targeting a gene.  The reported gene probabilities and
-nominal FDR thresholds therefore require empirical validation.  Permutations
-used for that purpose must preserve experimental blocking and within-gene
-guide structure.
+Matching the number of control guides per pseudo-gene does not reproduce the
+dependence among guides that target one gene, because control guides are
+grouped at random.  The correlation correction above addresses that
+dependence directly, and Table~\ref{tab:calibration-grid} evaluates it.
+Permutations used to validate gene-level error rates must likewise preserve
+experimental blocking and within-gene guide structure.
 
 \subsection{Denominator choice and effect interpretation}
 
@@ -67,8 +78,9 @@ increase the library share of unchanged guides (Figure~\ref{fig:simcrispr}),
 so relative abundance alone does not establish an absolute change.
 
 Control-based denominators use a prespecified control class as the reference.
-The simCRISPR analysis rescales control totals to the mean library size and
-rounds them, as detailed in the Supplement.  The resulting effective totals
+The function \texttt{barcs\_control\_totals()} holds the control class at a
+constant share of each library, rescales the totals to the mean library size,
+and rounds them, as used in the simCRISPR analysis.  The resulting effective totals
 come from normalization; their compatibility with the full-library sampling
 model requires separate assessment.  Effects are relative to the chosen
 controls.  Interpreting them as changes in absolute abundance also requires
@@ -85,7 +97,7 @@ For HAP1, HEK293FT, MDA-MB-231, and THP1, days 0, 7, and 14 were fitted
 jointly with continuous time and a replicate indicator.  K562 was excluded
 because one day-0 replicate was absent.  BARCS, MAGeCK-MLE, edgeR-QL, DESeq2,
 and limma--voom received the identical rounded matrix and tested the same time
-slope.  Non-targeting guides were grouped into pseudo-genes matching the
+slope; BARCS was moderated as described above.  Non-targeting guides were grouped into pseudo-genes matching the
 target-gene guide-count distribution, and the same post-aggregation control
 scaling rule was applied to all five methods.  A BARCS endpoint fit using only
 days 0 and 14 tested the value of the intermediate time point.  Known
@@ -100,7 +112,9 @@ was treated as a processed-count sensitivity study.
 
 The IL2RA screen comprised four ordered FACS bins from each of three donors.
 BARCS fitted one ordered-bin score with donor indicators, and MAGeCK-MLE
-received the same design.  We assigned the 593 non-targeting guides to five
+received the same design.  Bin locations were the conditional means of a
+standard normal variable within intervals of probability 0.2, 0.3, 0.3, and
+0.2.  We assigned the 593 non-targeting guides to five
 deterministic folds.  For each fold, the other four estimated the control
 scale and the held-out fold evaluated it.  A seeded permutation of fold
 assignments checked that identifier ordering did not determine the result.  We
@@ -118,7 +132,8 @@ The known interaction effects let us compare full-library, non-targeting, and
 safe-harbor denominators.  Control guides used for normalization and
 calibration were held out from scoring in simCRISPR. The all-null
 beta-binomial grid varied library number, abundance, dispersion, and guides
-per gene, with a focused correlated-guide arm.  Calibration specifications are
+per gene, with a focused correlated-guide arm in which a shared gene-by-library
+latent normal effect induced a correlation of 0.4 among a gene's guides.  Calibration specifications are
 given in Supplementary Section~\ref{sec:supp-calibration}.
 
 \subsection{External and supplementary analyses}
@@ -128,5 +143,6 @@ CB\textsuperscript{2} probabilities using full-library totals and ran BARCS on
 the deposited PSN1 and DeWeirdt normalized tables.  Supplementary analyses
 include the serial-harvest HT-29 screen, a four-coefficient GSE70038 screen
 with method-specific pathway enrichment, and the Sanson A375 endpoint and
-copy-number audit.  The Supplement provides detailed preprocessing, design,
+copy-number audit.  These supplementary analyses and the external audit were
+computed with BARCS 0.1.0, without dispersion moderation.  The Supplement provides detailed preprocessing, design,
 and scoring definitions, together with the complete external audit.

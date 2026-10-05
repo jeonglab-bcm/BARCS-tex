@@ -1,25 +1,25 @@
 % !TeX root = ../main.tex
 \begin{abstract}
-Pooled CRISPR screens increasingly use longitudinal, donor-adjusted, and
-factorial designs, whereas beta-binomial screen methods have largely focused
-on pairwise comparisons. BARCS extends the library-total-conditional
-beta-binomial model to guide-level regression with an arbitrary design matrix
-to estimate time, covariate, and interaction effects. In four
-replicate-complete Cas13 screens, adding the intermediate time point modestly
-improved essential-gene recovery. Applying the same non-targeting-control
-scaling rule to BARCS, MAGeCK-MLE, edgeR-QL, DESeq2, and limma--voom produced
-similar calibration diagnostics, although the alternatives ranked essential
-genes more strongly. In an ordered-bin IL2RA screen, donor-adjusted BARCS
-recovered 22 validated regulators with 49 calls, compared with 17 regulators
-and 72 calls for the matched MAGeCK-MLE fit. Cross-fitted control scaling
-reduced the guide-level null $p<0.05$ rate from 0.133 to 0.049. Simulations
-showed gains from dispersion moderation and control-based denominators, with
-substantial variation in the denominator effect across seeds. In a null grid,
-combining dependent guides inflated gene-level error. Aggregation-matched
-control scaling reduced but did not eliminate the inflation. An external audit
-identified a denominator-dependent CB\textsuperscript{2} false-discovery
-result; broader calibration concerns remained unresolved. Inference with this
-multivariable beta-binomial model depends on independent biological libraries,
-likelihood-compatible counts, and calibration at the level of the reported
-statistic. Correlated guides and partitioned bins require further modeling.
+Pooled CRISPR screens increasingly use time courses, ordered FACS fractions,
+donor cohorts, and factorial treatments, but beta-binomial methods for screen
+data have been limited to comparisons between two groups.  Analyzing these
+designs requires a model that keeps the full design, separates sequencing depth
+from biological replication, and reports gene-level error rates that hold when
+guides targeting the same gene share noise.  To meet these needs, we developed
+BARCS (Beta-binomial Analysis and Regression for CRISPR Screens), which fits
+guide-level beta-binomial regression on an arbitrary design matrix, takes its
+degrees of freedom from independent libraries rather than from reads,
+moderates guide dispersions across the library, and combines guides into a
+gene statistic that accounts for within-gene correlation.  In four
+transcriptome-scale Cas13 time-course screens, BARCS ranked essential genes as
+well as MAGeCK-MLE, edgeR-QL, DESeq2, and limma--voom (average precision 0.876
+versus 0.874--0.877) and recovered as many essential genes at a gene-level FDR
+of 0.10 as the best alternative (0.767 versus 0.692--0.767).  In a
+donor-adjusted IL2RA screen with four ordered FACS bins, BARCS recovered 23 of
+26 validated regulators with 61 calls, compared with 17 regulators and 72 calls
+for MAGeCK-MLE.  In simulations, dispersion moderation and control-based
+denominators increased power, and the correlation-aware gene statistic held
+the gene-level type I error at 0.018--0.052 when guides shared noise, whereas
+the uncorrected statistic reached 0.254.  BARCS is available as an R package
+at \url{https://github.com/jeonglab-bcm/BARCS}.
 \end{abstract}

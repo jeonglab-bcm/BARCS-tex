@@ -47,10 +47,10 @@ average slopes in interaction models, and other one-degree-of-freedom
 hypotheses.  Guide-wise two-sided $p$-values are adjusted using the
 Benjamini--Hochberg procedure \citep{benjamini1995controlling}.
 
-\subsubsection{Optional guide-dispersion moderation}
+\subsubsection{Guide-dispersion moderation}
 
-BARCS-MOD applies an optional empirical-Bayes transformation to the fitted
-guide statistics while retaining the same likelihood.  Let $\nu=m-q$ and let
+BARCS applies an empirical-Bayes transformation to the fitted guide statistics
+by default, while retaining the same likelihood.  Let $\nu=m-q$ and let
 $s_g^2=Q_g^{(0)}/\nu$ be guide $g$'s Pearson variance inflation under the
 binomial working model.  A lowess trend in log mean CPM gives a guide-specific
 prior scale $s_{0g}^2$, and the scaled-$F$ log-moment estimator of
@@ -83,8 +83,9 @@ Equation~\eqref{eq:guide-moderated-t} retains the fitted inflation floor in
 the standard-error rescaling.  The optional \texttt{one\_way=TRUE}
 variant replaces $\widetilde{s}_g^2$ by
 $\max(\widetilde{s}_g^2,s_{g,\mathrm{fit}}^2)$, so moderation can only increase
-a standard error.  All reported BARCS-MOD results are simulation ablations;
-the real-data benchmarks use unmoderated BARCS.
+a standard error.  Moderation is applied whenever at least 50 guides are
+usable; the simulation ablations compare it with the unmoderated fit
+(BARCS-ST).
 
 \subsubsection{From guide statistics to gene statistics}
 
@@ -120,13 +121,23 @@ Benjamini--Hochberg to the collection of $p_g$ values.  Concordant guide directi
 discordant directions cancel.  The median limits the influence of one extreme
 guide on the reported effect.
 
-This summary does not fit a hierarchical gene model.
-Equations~\eqref{eq:signedz}--\eqref{eq:genestouffer} give equal weight to
-valid guides and use the independence reference $\sqrt{m_g}$; shared sequence
-artifacts or other correlation can therefore make the gene statistic
-anti-conservative.  An extension for gene-level inference should estimate
-guide reliability and within-gene dependence or use a hierarchical effect
-model.  In the Cas13 comparison, the four guide-level regression methods use
+Equation~\eqref{eq:genestouffer} uses the independence reference
+$\sqrt{m_g}$.  If the null scores of a gene's guides have average correlation
+$r$, the variance of $\sum_j z_{gj}$ is $m_g+m_g(m_g-1)r$, and BARCS reports
+\begin{equation}
+  Z_g^{\mathrm{c}}=\frac{\sum_{j=1}^{m_g}z_{gj}}{\sqrt{m_g+m_g(m_g-1)\hat r}},
+  \qquad
+  \hat r=\max\!\left(0,\ \bar c_{\mathrm{within}}-\bar c_{\mathrm{between}}\right),
+  \label{eq:genestouffer-corrected}
+\end{equation}
+where $\bar c_{\mathrm{within}}$ averages, over genes with at least two guides,
+the mean pairwise correlation of the guides' Pearson residual vectors, and
+$\bar c_{\mathrm{between}}$ averages the same quantity over pairs of guides
+from different genes.  The between-gene term removes correlation shared by the
+whole library, such as normalization artifacts.  Residuals are computed after
+the fitted mean has absorbed every design effect, so a true gene effect does
+not contribute to $\hat r$.  The summary still gives equal weight to valid
+guides and does not fit a hierarchical gene model.  In the Cas13 comparison, the four guide-level regression methods use
 signed Stouffer aggregation as specified below.  In the other biological
 head-to-head benchmarks, the Stouffer--median procedure is used for BARCS (and
 for the naive binomial comparator).  MAGeCK, Chronos, BAGEL2, Waterbear, and

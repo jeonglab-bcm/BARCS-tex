@@ -33,7 +33,11 @@ not alter effect estimates or ranks.  All methods used two-sided guide or Wald
 probabilities.  For the four guide-level regression methods, coefficient
 direction was retained in the signed Stouffer score; the resulting gene
 probability was two-sided and was adjusted by the Benjamini--Hochberg
-procedure.  Endpoint robust-rank-aggregation summaries \citep{kolde2012rra}
+procedure.  So that the four methods were aggregated identically, this
+comparison used the uncorrected $\sqrt{m_g}$ denominator for all of them,
+including BARCS; with the correlation correction, the BARCS average precision
+changed by less than 0.003.  BARCS guide fits used the default dispersion
+moderation.  Endpoint robust-rank-aggregation summaries \citep{kolde2012rra}
 were excluded because they do not estimate the three-time-point longitudinal
 coefficient.
 

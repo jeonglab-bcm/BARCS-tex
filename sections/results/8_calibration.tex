@@ -1,66 +1,75 @@
 % !TeX root = ../../main.tex
-\subsection{Guide dependence limits gene-level calibration}
+\subsection{A correlation-aware gene statistic keeps gene-level error rates
+nominal}
 \label{sec:calibration}
 
-To test whether calibration changes after aggregation, we simulated all-null
-beta-binomial screens across sample sizes, mean guide counts, and dispersions,
-with three or five guides per gene.  A focused arm introduced within-gene
-guide correlation of 0.4.  Odd-numbered null genes estimated a control scale
-after Stouffer aggregation, and even-numbered null genes evaluated it.  The
-full grid and a separate continuous-dose diagnostic are described in
-Supplementary Section~\ref{sec:supp-calibration}.
+A calibrated gene test requires more than calibrated guide tests.  Guides that
+target the same gene share every library, so noise that they share makes
+their null scores positively correlated, and a Stouffer statistic that divides
+by $\sqrt{m_g}$ then overstates the evidence.  BARCS therefore estimates the
+average within-gene correlation $r$ of guide Pearson residuals, subtracts the
+average correlation between guides of different genes, and divides the
+combined score by $\sqrt{m_g+m_g(m_g-1)r}$ instead (Methods).  Because the
+fitted mean absorbs every design effect, including a true gene effect, a real
+signal does not inflate $r$; only shared noise does.
 
-Under independent guides, the largest five-seed mean gene-level $p<0.05$ rate
-was 0.074.  In the correlated-guide arm, guide-level rejection rates remained
-near or below 0.05, while gene-level rates reached 0.108--0.262
-(Table~\ref{tab:calibration-grid}).  Aggregation-matched held-out scaling
-reduced these rates to 0.056--0.112 but did not remove the inflation,
-particularly with five guides per gene.  The gene combiner's independence
-assumption therefore contributes to miscalibration.  A near-nominal
-guide-level diagnostic alone cannot establish calibration of the gene
-probabilities.
+To test this correction, we simulated all-null beta-binomial screens across
+sample sizes, mean guide counts, and dispersions, with three or five guides
+per gene, and added a focused arm in which guides of the same gene had a
+latent correlation of 0.4.  The full grid and a separate continuous-dose
+diagnostic are described in Supplementary Section~\ref{sec:supp-calibration}.
+With independent guides, BARCS estimated $r$ near zero and the gene-level
+$p<0.05$ rate stayed between 0.000 and 0.070.  With correlated guides, the
+guide-level rates remained at or below 0.048, but the uncorrected gene-level
+rates reached 0.108--0.262 (Table~\ref{tab:calibration-grid}).  The corrected
+statistic brought them to 0.018--0.052, close to the nominal 0.05, without any
+negative controls or post hoc scaling.
 
 \begin{table}[htbp]
 \centering
 \caption{Null calibration before and after gene aggregation.  Entries are
-ranges of five-seed mean rejection rates across the applicable grid cells.
-The held-out column applies a scale learned from a disjoint half of the null
-genes after the same aggregation.  The Mod. column denotes guide-variance moderation.  Rejection uses $p<0.05$, with a target rate of 0.05.}
+ranges of five-seed mean rejection rates at $p<0.05$ across the applicable
+grid cells; the target rate is 0.05.  ``Uncorrected'' divides the Stouffer sum
+by $\sqrt{m_g}$; ``Corrected'' uses the within-gene residual correlation
+estimated by BARCS.  The Mod. column denotes guide-dispersion moderation.}
 \label{tab:calibration-grid}
 \small
 \setlength{\tabcolsep}{3.5pt}
 \begin{tabular}{llrccc}
 \toprule
-Guide dependence & Guides & Mod. & Guide & Gene & Held-out gene\\
+ & & & & \multicolumn{2}{c}{Gene}\\
+\cmidrule(lr){5-6}
+Guide dependence & Guides & Mod. & Guide & Uncorrected & Corrected\\
 \midrule
-Independent & 3 & No  & 0.000--0.058 & 0.002--0.064 & 0.000--0.076\\
-Independent & 3 & Yes & 0.000--0.060 & 0.002--0.074 & 0.004--0.088\\
-Independent & 5 & No  & 0.000--0.056 & 0.004--0.064 & 0.004--0.064\\
-Independent & 5 & Yes & 0.000--0.060 & 0.026--0.074 & 0.012--0.060\\
-Correlated ($r=0.4$) & 3 & No  & 0.027--0.043 & 0.124--0.144 & 0.060\\
-Correlated ($r=0.4$) & 3 & Yes & 0.000--0.030 & 0.108--0.140 & 0.056--0.068\\
-Correlated ($r=0.4$) & 5 & No  & 0.029--0.048 & 0.232--0.254 & 0.104--0.112\\
-Correlated ($r=0.4$) & 5 & Yes & 0.000--0.041 & 0.224--0.262 & 0.068--0.076\\
+Independent & 3 & No  & 0.000--0.058 & 0.002--0.064 & 0.002--0.064\\
+Independent & 3 & Yes & 0.000--0.060 & 0.002--0.074 & 0.000--0.070\\
+Independent & 5 & No  & 0.000--0.056 & 0.004--0.064 & 0.000--0.062\\
+Independent & 5 & Yes & 0.000--0.060 & 0.026--0.074 & 0.018--0.070\\
+Correlated ($r=0.4$) & 3 & No  & 0.027--0.043 & 0.124--0.144 & 0.028--0.040\\
+Correlated ($r=0.4$) & 3 & Yes & 0.000--0.030 & 0.108--0.140 & 0.018--0.040\\
+Correlated ($r=0.4$) & 5 & No  & 0.029--0.048 & 0.232--0.254 & 0.040--0.052\\
+Correlated ($r=0.4$) & 5 & Yes & 0.000--0.041 & 0.224--0.262 & 0.022--0.052\\
 \bottomrule
 \end{tabular}
 \end{table}
+
+In the real screens analyzed here, the estimated within-gene correlation was
+small: 0.008--0.026 across the four Cas13 cell lines, 0.011 in the IL2RA
+screen, and 0.011 in the CRISPRn screen of \citet{evers2016crispr}.  The
+independence assumption of the Stouffer statistic therefore held
+approximately in these data, and the correction changed the Cas13 average
+precision by less than 0.003.  The correction matters when guides share
+artifacts, and BARCS reports the estimate so that users can check it.
 
 \paragraph{Denominator sensitivity in an external audit.}
 An audit of the benchmark deposited by \citet{dempster2025fdr,dempster2025fdrdata}
 examined a separate source of error: changing library totals by restricting
 the input to null genes before fitting.  Because H.-H.J.\ also developed
-CB\textsuperscript{2}, this is an audit of an author's prior method.
-For the same Avana null genes, restoring full-library CB\textsuperscript{2}
+CB\textsuperscript{2}, this is an audit of an author's prior method.  For the
+same Avana null genes, restoring full-library CB\textsuperscript{2}
 probabilities reduced discoveries at FDR 0.10 from 152 to zero.  BARCS was not
 fitted in that comparison.  The largest cell-line-specific null $p<0.05$ rate
-remained 0.145, so the corrected discovery count does not establish nominal
-calibration.
-
-BARCS produced different diagnostics for the deposited normalized PSN1 and
-DeWeirdt tables.  PSN1 produced no gene calls and guide-level $p<0.05$ rates
-of 0.0481 before scaling and 0.0465 after scaling.  In DeWeirdt, BARCS
-recovered one of 28 curated interactions, and 37 of its 38 calls arose in one
-comparison. The complete audit is reported in Supplementary
-Section~\ref{sec:supp-fdr-audit}.  Interpreting a discovery threshold requires
-checking the denominator, guide dependence, and calibration on independent
-controls.
+remained 0.145, so nominal calibration requires further checks beyond the
+corrected discovery count.  The complete audit, including BARCS results on the deposited
+PSN1 and DeWeirdt tables, is reported in Supplementary
+Section~\ref{sec:supp-fdr-audit}.

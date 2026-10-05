@@ -1,75 +1,85 @@
 % !TeX root = ../../main.tex
-\subsection{An intermediate Cas13 time point modestly improves recovery}
+\subsection{BARCS ranks essential genes as well as general count models in
+Cas13 time courses}
 \label{sec:liang}
 
-The Cas13 fitness screens of \citet{liang2026lncrna} contain measurements at
-days 0, 7, and 14.  K562 was excluded because one day-0 replicate was not
-deposited.  In HAP1, HEK293FT, MDA-MB-231, and THP1, BARCS, official
-MAGeCK-MLE \citep{li2014mageck}, edgeR-QL \citep{lun2016edger}, DESeq2
-\citep{love2014deseq2}, and limma--voom \citep{law2014voom} estimated the same
-continuous time slope with a replicate block and two-sided tests.
+We first tested whether BARCS recovers known biology from a longitudinal
+design.  The Cas13 fitness screens of \citet{liang2026lncrna} measured 56,322
+guides at days 0, 7, and 14 in five cell lines.  We analyzed HAP1, HEK293FT,
+MDA-MB-231, and THP1 and excluded K562, for which one day-0 replicate was not
+deposited.  BARCS, official MAGeCK-MLE \citep{li2014mageck}, edgeR-QL
+\citep{lun2016edger}, DESeq2 \citep{love2014deseq2}, and limma--voom
+\citep{law2014voom} each estimated the same continuous time slope with a
+replicate block and two-sided tests.  The deposited values had already
+undergone median-of-ratios normalization, ComBat correction, and
+replicate-outlier processing, so we rounded them once to the nearest
+pseudo-count and supplied the identical matrix to every method.  This analysis
+therefore compares methods on a shared processed input, and a test of either
+likelihood on raw counts would require the raw reads.
 
-The deposited values had already undergone median-of-ratios normalization,
-ComBat correction, and replicate-outlier processing.  We rounded them once to
-the nearest pseudo-count and supplied the identical matrix to every method.
-This processed-count sensitivity analysis cannot establish how faithfully
-either likelihood models raw counts.  Processing can change the effective
-depth, as also examined in the external audit.
+Known essential protein-coding genes served as positives, and targeted lncRNAs
+with TPM equal to zero in both available expression assays served as
+cell-line-specific proxy nulls.  Limited expression sensitivity and RfxCas13d
+collateral activity can place a target with a real fitness effect in this null
+set, which rewards conservative methods, so we treat the proxy-null rates as
+diagnostics rather than validated type I errors.  To compare calibration on an
+equal footing, we assigned the same 1,000 non-targeting guides to 156--159
+pseudo-genes per cell line, with guide counts sampled from the target-gene
+distribution, and applied one tail-scaling rule to each method's native gene
+summary.
 
-To test the contribution of the middle time point, we compared the full design
-with a BARCS fit using only days 0 and 14.  The three-time-point fit increased
-macro-average precision from 0.832 to 0.838 and directional essential-gene
-recall at FDR 0.10 from 0.538 to 0.600.  Recall at an empirical 5\% proxy-null
-false-positive rate increased from 0.858 to 0.867. The proxy-null $p<0.05$
-rate changed from 0.038 to 0.039.  Day 7 therefore modestly improved recovery
-with little change in proxy-null rejection.  Cell-line-specific proxy nulls
-are targeted lncRNAs with TPM equal to zero in both available expression
-assays, so limited expression sensitivity and RfxCas13d collateral activity
-can each place a target with a real fitness effect in the null set.  Because
-such contamination rewards conservative methods, the proxy-null rates reported
-here and in the comparison below are diagnostics rather than validated type-I
-errors.
+All five methods ranked essential genes similarly (Figure~\ref{fig:liang}).
+BARCS reached a macro-average precision of 0.876, compared with 0.874 for
+edgeR-QL and DESeq2, 0.876 for limma--voom, and 0.877 for MAGeCK-MLE.  At a
+gene-level FDR of 0.10, BARCS recovered 0.767 of essential genes in the
+depleted direction, the same as limma--voom and more than edgeR-QL (0.746),
+DESeq2 (0.758), and MAGeCK-MLE (0.692).  At an empirical 5\% proxy-null
+false-positive rate, recall was 0.883 for BARCS and 0.879--0.888 for the
+alternatives.  The calibration diagnostics were also similar after the common
+scaling rule: the mean absolute calibration error was 0.018 for BARCS and
+0.017--0.022 for the alternatives.
 
-For the head-to-head calibration analysis, the same 1,000 non-targeting guides
-were assigned identically to 156--159 pseudo-genes per cell line, with guide
-counts sampled from the target-gene distribution.  We applied the same
-tail-scaling rule to each method's native pseudo-gene summary.  Mean
-cell-line-specific absolute calibration error was 0.0207 for BARCS, 0.0198 for
-DESeq2, 0.0181 for edgeR-QL, 0.0178 for limma--voom, and 0.0171 for
-MAGeCK-MLE.  The calibration diagnostics were therefore similar after the
-common scaling rule.  The four alternatives ranked known essential genes more
-strongly.  Average precision was 0.838 for BARCS and 0.874--0.877 for the four
-alternatives; directional recall at gene FDR 0.10 was 0.600 versus
-0.738--0.767.  At a matched empirical 5\% proxy-null rate, recall was 0.867
-versus 0.879--0.888.
+Dispersion moderation accounts for this result.  Each guide has only three
+residual degrees of freedom in these designs (six libraries and three
+coefficients), and without moderation
+BARCS reached a precision of 0.838 and an FDR-0.10 recall of 0.600, below all
+four alternatives.  Moderation also brought BARCS into closer agreement with
+the other guide-level methods.  Among 47,107 proxy-null guides, the number on
+which BARCS disagreed with all three of edgeR-QL, DESeq2, and limma--voom fell
+from 1,303 to 62, and in every remaining case BARCS was the only method with
+$p<0.05$ (Figure~\ref{fig:liang}F--H).
+
+We also asked whether the intermediate time point adds information.  A BARCS
+fit using only days 0 and 14 reached a precision of 0.878 and an FDR-0.10
+recall of 0.763, compared with 0.876 and 0.767 for the three-time-point fit.
+With moderation, the endpoint fit therefore recovered essential genes as
+well as the full time course in these screens.  Its value lies in the estimand: the three-time-point fit
+estimates a slope over the full course and can be extended to test curvature,
+whereas the endpoint fit estimates only the net change.
 
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=\textwidth]{figures/liang_longitudinal_volcano_trajectories.pdf}
-\caption{\textbf{Longitudinal Cas13 sensitivity analysis using days 0, 7, and
-14.}  (A--E) Gene-level results for BARCS, MAGeCK-MLE, edgeR-QL, DESeq2, and
+\caption{\textbf{Longitudinal Cas13 analysis using days 0, 7, and 14.}
+(A--E) Gene-level results for BARCS, MAGeCK-MLE, edgeR-QL, DESeq2, and
 limma--voom across the four replicate-complete cell lines.  All five panels
-use common axis scales to display the method-specific effect estimates.  The x axis is the signed logarithmic transform
+use common axis scales.  The x axis is the signed logarithmic transform
 $\mathrm{sign}(\beta)\log_{10}(1+|\beta|/0.25)$, labelled at the untransformed
-effect values.  The horizontal line marks two-sided $p=0.05$; $-\log_{10}(p)$
-is clipped at 60.  Triangles mark clipped points, whose count is shown above
-each panel.  Colour denotes cell line
-throughout the figure; coloured points are negative-effect genes called at FDR
-0.10, and all remaining genes are grey.  (F--H) Processed guide abundance in
-counts per million for three proxy-null disagreements, with markers filled by
-cell line and replicates distinguished by point shape and line type.  Among
-proxy-null
-guides, 61 satisfied BARCS $p\geq0.20$ with all three guide-level alternatives
-$p<0.05$.  Within each cell line, the candidate minimizing the largest
-alternative $p$ was identified; the three with the largest ratio of BARCS
-$p$ to that maximum are displayed.  Conversely, 1,242 proxy-null guides had
-BARCS $p<0.05$ while all three alternatives had $p\geq0.05$.  The panels show trajectories selected from one direction of disagreement; they
-do not estimate its prevalence.}
+effect values.  The horizontal line marks two-sided $p=0.05$, and
+$-\log_{10}(p)$ is clipped at 60; triangles mark clipped points, whose count is
+shown above each panel.  Colour denotes cell line throughout the figure;
+coloured points are negative-effect genes called at FDR 0.10, and all
+remaining genes are grey.  (F--H) Processed guide abundance in counts per
+million for three proxy-null guides on which BARCS disagreed with all three
+other guide-level methods, with markers filled by cell line and replicates
+distinguished by point shape and line type.  Among 47,107 proxy-null guides,
+62 had BARCS $p<0.05$ while edgeR-QL, DESeq2, and limma--voom all had
+$p\geq0.05$, and none showed the opposite pattern (BARCS $p\geq0.20$ with all
+three alternatives $p<0.05$).  Within each cell line, the candidate with the
+smallest BARCS $p$ was identified, and the three with the largest ratio of the
+smallest alternative $p$ to the BARCS $p$ are displayed.  The panels illustrate
+the remaining disagreements; they do not estimate their prevalence.}
 \label{fig:liang}
 \end{figure}
-
-Figure~\ref{fig:liang} pairs the gene-level comparison with three guide
-trajectories selected by the stated disagreement rule, showing the time
-patterns behind those differences in significance.
 
 \FloatBarrier

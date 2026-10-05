@@ -1,9 +1,9 @@
 % !TeX root = ../main.tex
-\subsection{BARCS estimates multivariable effects from guide counts}
+\subsection{BARCS fits multivariable designs directly from guide counts}
 \label{sec:overview}
 
-BARCS takes a guide-count matrix, library totals, and a sample design matrix.
-For guide $g$ in library $i$, the default model is
+BARCS takes a guide-count matrix, the library totals, and a sample design
+matrix.  For guide $g$ in library $i$, the model is
 \begin{equation}
 K_{gi}\mid N_i\sim
 \operatorname{BetaBinomial}(N_i,\mu_{gi},\rho_g),
@@ -11,29 +11,32 @@ K_{gi}\mid N_i\sim
 \logit(\mu_{gi})=\mathbf{x}_i^\top\boldsymbol{\beta}_g,
 \label{eq:barcs-model}
 \end{equation}
-where $N_i$ is the full mapped-guide total before filtering, $\mu_{gi}$ is the
-expected guide proportion, and $\rho_g$ represents overdispersion.
-The design vector $\mathbf{x}_i$ can contain continuous predictors, group or
-donor indicators, and interactions.  A prespecified coefficient or contrast tests the effect of interest within the
-joint fit.  BARCS retains the
-sampling principle of CB\textsuperscript{2} \citep{jeong2019beta}, with its own
-estimation and finite-sample testing procedure.
+where $N_i$ is the full mapped-guide total recorded before any filtering,
+$\mu_{gi}$ is the expected guide proportion, and $\rho_g$ is the guide's
+overdispersion.  The design vector $\mathbf{x}_i$ can contain continuous
+predictors, group or donor indicators, and interactions, and a prespecified
+coefficient or contrast tests the effect of interest within the joint fit.
+BARCS keeps the sampling principle of CB\textsuperscript{2}
+\citep{jeong2019beta} but has its own estimation and finite-sample testing
+procedure.
 
-BARCS fits guide coefficients and dispersion and computes a $t$ statistic
-using residual sample degrees of freedom.  For gene-level results, it then
-summarizes the guide evidence.  Gene summaries use a directional Stouffer
-statistic and the median guide coefficient.  In the simulation ablations,
-BARCS-ST uses unmoderated guide statistics and BARCS-MOD applies
-empirical-Bayes variance moderation before the same summary.  Real-data
-analyses use unmoderated BARCS.  Control scaling adjusts significance without
-changing coefficient estimates; its placement is specified for each benchmark.
-The Cas13 comparison calibrates gene summaries using aggregation-matched
-control pseudo-genes, whereas the IL2RA diagnostic cross-fits a guide-level
-scale.  The null simulations below test whether guide-level calibration
-extends to gene summaries.
+The analysis proceeds in three steps.  First, BARCS fits each guide and tests
+the coefficient of interest against a Student $t$ reference whose degrees of
+freedom come from the independent libraries.  Second, because a screen leaves
+each guide only a few residual degrees of freedom, BARCS moderates every
+guide's dispersion toward a trend in abundance fitted across the library,
+which adds prior degrees of freedom to the reference distribution.  Third,
+BARCS combines the guides of each gene with a directional Stouffer statistic,
+reports the median guide coefficient as the gene effect, and widens the null
+variance of the statistic by the within-gene correlation estimated from guide
+residuals.  We refer to the full procedure as BARCS; where the simulations
+isolate the effect of moderation, BARCS-ST denotes the unmoderated guide fits
+and BARCS-MOD the moderated ones, both followed by the same gene summary.
+Negative-control scaling, when applied, changes significance but not
+coefficient estimates, and its placement is stated for each benchmark.
 
-Full-library totals estimate changes in library share.  Control-based
-normalization instead expresses abundance relative to a prespecified control
-class, as examined in the interaction simulation.  This deliberate change of
-reference is distinct from inadvertently recomputing totals after guide
-filtering.
+Full-library totals estimate changes in library share.  BARCS can instead use
+control-based totals, which express abundance relative to a prespecified
+control class; we examine this choice in the interaction simulation.  This
+deliberate change of reference is distinct from recomputing totals after
+guide filtering, which changes the model without the analyst intending it.
