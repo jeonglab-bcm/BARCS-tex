@@ -19,11 +19,11 @@ but does not refit either count likelihood.
 
 \begin{table}[ht]
 \centering
-\caption{Sanson A375 endpoint sensitivity analysis.  Recall and gold-set FDP
-use nominal FDR 0.05 and a negative effect.  The last column is Spearman
-correlation between effect and copy number among reference nonessential genes.
-Paired bootstrap intervals assess ranking differences; the evaluation
-set is enriched for positives.}
+\caption{Sanson A375 endpoint analysis.  Recall and gold-set FDP use nominal
+FDR 0.05 and a negative effect.  The last column is the Spearman correlation
+between effect and copy number among reference nonessential genes.  Paired
+bootstrap intervals assess ranking differences; the evaluation set is
+enriched for positives.}
 \label{tab:sanson}
 \small
 \setlength{\tabcolsep}{3.5pt}
@@ -32,23 +32,27 @@ set is enriched for positives.}
 Method & AUROC & Avg. precision & Recall & Gold-set FDP & CNV corr.\\
 \midrule
 \methodswatch{barcsblue} BARCS &
-0.9598 & 0.9786 & 0.7231 & 0.0118 & $-0.185$\\
+0.9631 & 0.9811 & 0.8831 & 0.0235 & $-0.185$\\
 \methodswatch{barcsblue} BARCS + CNV &
-0.9533 & 0.9762 & 0.7231 & 0.0118 & $-0.042$\\
+0.9522 & 0.9771 & 0.8811 & 0.0228 & $0.003$\\
 \methodswatch{mageckorange} Official MAGeCK-MLE &
-0.9598 & 0.9795 & 0.7098 & 0.0074 & $-0.207$\\
+0.9600 & 0.9796 & 0.7098 & 0.0074 & $-0.207$\\
 \methodswatch{mageckorange} Official MAGeCK-MLE + CNV &
-0.9501 & 0.9762 & 0.7098 & 0.0074 & $-0.006$\\
+0.9505 & 0.9763 & 0.7098 & 0.0074 & $-0.006$\\
 \bottomrule
 \end{tabular}
 \end{table}
 
-CNV correction reduces the nuisance association (Table~\ref{tab:sanson}), from
-$-0.185$ to $-0.042$ for BARCS and from $-0.207$ to $-0.006$ for MAGeCK-MLE,
-but decreases AUROC for both methods.  After correction, the BARCS--MAGeCK
-AUROC difference is 0.00316 (paired stratified-bootstrap 95\% CI $-0.00265$ to
-$0.00924$), and the average-precision difference is effectively zero (95\% CI
-$-0.00349$ to $0.00295$).  At nominal FDR 0.05, BARCS has 1.33 percentage
-points more recall but also a larger realized FDP within the gold-standard set
-(0.0118 versus 0.0074).  These data do not establish a ranking or calibration
-advantage for either count model.
+BARCS ranked the reference genes slightly better than MAGeCK-MLE before copy-number
+correction (AUROC 0.963 versus 0.960; average precision 0.981 versus 0.980)
+and, at a nominal FDR of 0.05, recovered 17.1 percentage points more of the
+essential genes (paired bootstrap 95\% CI 15.2 to 19.1), at the cost of a
+larger realized FDP within the gold-standard set (0.023 versus 0.007).
+CNV correction removed most of the nuisance association with copy number
+(Table~\ref{tab:sanson}), from $-0.185$ to $0.003$ for BARCS and from $-0.207$
+to $-0.006$ for MAGeCK-MLE, but lowered AUROC for both methods.  After
+correction, the BARCS--MAGeCK AUROC difference was 0.0017 (95\% CI $-0.0039$
+to $0.0073$) and the average-precision difference was 0.0008 (95\% CI
+$-0.0017$ to $0.0031$), so the two methods ranked genes equally well; the
+main difference between them is that BARCS calls more essential genes at the
+same nominal threshold.

@@ -5,7 +5,9 @@
 GSE70038 contains 64,747 guides in 16 libraries from two glioblastoma
 stem-cell lines and two neural stem-cell lines \citep{toledo2015pkmyt1}. BARCS
 and MAGeCK-MLE received the same five-column design: one shared initial
-condition and four cell-line-specific terminal coefficients.  This analysis
+condition and four cell-line-specific terminal coefficients.  MAGeCK-MLE was
+run without permutation because the comparison uses only its coefficient
+estimates and Wald $p$-values.  This analysis
 evaluates the joint estimation of all four effects and uses external
 annotations to examine disagreements with MAGeCK-MLE.
 
@@ -34,9 +36,9 @@ rRNA processing ($1.65\times10^{-5}$)\\
 GSC0827 & 139 & 61 & 61 &
 RNA metabolism ($2.77\times10^{-9}$) &
 RNA metabolism ($2.35\times10^{-4}$)\\
-NSCCB660 & 140 & 60 & 60 &
-RNA metabolism ($2.10\times10^{-4}$) &
-RNA metabolism ($2.21\times10^{-6}$)\\
+NSCCB660 & 141 & 59 & 59 &
+RNA metabolism ($1.71\times10^{-4}$) &
+RNA metabolism ($1.86\times10^{-6}$)\\
 NSCU5 & 144 & 56 & 56 &
 RNA metabolism ($3.36\times10^{-12}$) &
 RNA metabolism ($2.80\times10^{-13}$)\\
@@ -52,7 +54,7 @@ metabolism dominated both methods in the other coefficients.  The enrichments
 have limited use for assessing accuracy: Enrichr uses its library background
 rather than the genes testable in this screen, and essential-process
 enrichment is expected in a depletion experiment.  Against the independent
-Hart reference set, 62.3--75.9\% of the BARCS-exclusive genes and 59.0--86.2\%
+Hart reference set, 62.3--75.9\% of the BARCS-exclusive genes and 59.0--84.5\%
 of the MAGeCK-exclusive genes were essential, with strong enrichment for both
 methods in every coefficient (one-sided Fisher $p<10^{-22}$).  Neither method
 was consistently higher.  The complete overlap and enrichment records are
